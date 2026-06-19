@@ -1,3 +1,12 @@
+## 2026-06-19 - Shadow Cartographer
+
+- Folder: shadow-cartographer-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/shadow-cartographer-2026-06-19/
+- Core mechanic: Toggle cells in five 5x5 map puzzles to reconstruct hidden island silhouettes using row counts, column counts, and terrain clues.
+- Visual style: Coastal cartography palette with parchment panels, sea-glass backgrounds, dark forest shadow tiles, and gold satisfied clues.
+- Brain skill trained: Spatial deduction, constraint solving, visual pattern reasoning, and attention.
+- Notes to avoid repeating: Do not reuse 5x5 silhouette reconstruction, row/column shadow counts, or coastal cartographer theming in the next games.
+
 ## 2026-06-19 - Lantern Ledger
 
 - Folder: lantern-ledger-2026-06-19/
