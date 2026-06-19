@@ -33,3 +33,12 @@
 - Visual style: Warm orchard palette with rounded cards, tactile fruit buttons, and gentle highlight animations.
 - Brain skill trained: Working memory, sequencing, transformation logic, and attention.
 - Notes to avoid repeating: Do not reuse fruit melody recall, round-specific sequence transforms, or orchard harvest theming for the next games.
+
+## 2026-06-19 - Orbit Locksmith
+
+- Folder: orbit-locksmith-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/orbit-locksmith-2026-06-19/
+- Core mechanic: Rotate three concentric symbol rings through five lock puzzles, using telescope clues about exact sectors, colors, and ordered symbol alignments to infer the correct offsets.
+- Visual style: Deep midnight observatory palette with glowing cyan, gold, and green orbital controls on glassy navy panels.
+- Brain skill trained: Pattern logic, spatial indexing, deduction, and working memory.
+- Notes to avoid repeating: Do not reuse concentric rotating rings, telescope lock clues, orbital vault theming, or exact-sector symbol/color alignment puzzles in the next games.
