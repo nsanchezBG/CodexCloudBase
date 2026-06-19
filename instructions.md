@@ -4,7 +4,7 @@
 
 Every day at 3:00 a.m. Peru time, create and publish one new original web puzzle game for morning brain exercise inside this repository.
 
-The game must be playable in 10 to 15 minutes, feel fresh and mentally engaging, and work well on both desktop and mobile. Avoid repeating ideas already recorded in `memory.md`.
+The game must be playable in 10 to 15 minutes, feel fresh and mentally engaging, work well on desktop and mobile, and avoid repeating ideas already recorded in `memory.md`.
 
 ## Repository Context
 
@@ -17,18 +17,18 @@ This repository is the single GitHub Pages site. Do not create a new repository 
 Expected root files and folders:
 
 - `instructions.md`: the operating instructions for the daily agent run.
-- `memory.md`: the log of previously generated games and concepts. Read it before creating anything. It may be empty the first time.
+- `memory.md`: the log of previously generated games and concepts.
 - `index.html`: the public arcade homepage listing all generated games.
 - `Assets/`: optional shared visual assets.
 - `<game-slug>/index.html`: one folder per generated game, each with its own playable static page.
 
-GitHub Pages should be enabled once for this repository from branch `main`, folder `/`. Daily runs should not attempt to create new repositories or reconfigure Pages unless the current deployment is broken.
+GitHub Pages should be enabled once for this repository from branch `main`, folder `/`.
 
 ## Daily Workflow
 
 1. Read `instructions.md`.
 2. Read `memory.md`.
-3. Inspect the existing game folders and the root `index.html` so the new game fits the arcade without duplicating earlier concepts.
+3. Inspect existing game folders and the root `index.html` so the new game fits the arcade without duplicating earlier concepts.
 4. Invent one new puzzle game concept that is meaningfully different from previous entries.
 5. Choose a short, memorable game title.
 6. Generate a repository-safe slug using the title plus date or short code, such as `mindgrid-2026-06-19` or `glyph-lock-7k3-2026-06-19`.
@@ -39,7 +39,12 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
 11. Update `memory.md` with the new game entry.
 12. Test the game locally in the cloud environment as much as available.
 13. Commit all changes with a clear message.
-14. Ensure the Git remote exists with `git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`.
+14. Ensure `origin` exists without printing its URL:
+
+    ```bash
+    git remote | grep -qx origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git
+    ```
+
 15. Do not expect `GH_PUSH_TOKEN` to be visible during the agent phase. It is a Codex environment secret used by the environment setup script before the task starts. The setup script should already have configured Git credentials for `origin`.
 16. Before pushing, clear any GitHub injected credential header so Git uses the configured `origin` credentials:
 
@@ -48,9 +53,15 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
     git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
     ```
 
-17. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
-18. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
-19. Report the live GitHub Pages URL for the new game.
+17. Do not run `git remote -v`, `git remote get-url origin`, or any other command that could print an authenticated remote URL.
+18. Push the committed work directly to GitHub `main` with:
+
+    ```bash
+    git push origin HEAD:main
+    ```
+
+19. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
+20. Report the live GitHub Pages URL for the new game.
 
 A local commit is not complete. The run is only complete after the changes are pushed to GitHub `main`.
 
@@ -89,73 +100,21 @@ Each generated game folder should contain:
 - optional `Assets/`
 - optional `README.md`
 
-The game may use:
+The game may use vanilla HTML/CSS/JavaScript, React via CDN and Babel, CSS animations, Canvas, SVG, and local assets.
 
-- Vanilla HTML, CSS, and JavaScript
-- React via CDN and Babel, if useful
-- CSS animations
-- Canvas or SVG when useful
-- Local assets from the game's `Assets/` folder or the root `Assets/` folder
-
-The game must not require:
-
-- build steps
-- npm install
-- servers
-- API keys
-- external databases
-- authentication
-- GitHub CLI
-- creation of additional repositories
+The game must not require build steps, npm install, servers, API keys, databases, authentication, GitHub CLI, or creation of additional repositories.
 
 If using React via Babel, ensure the page works directly on GitHub Pages.
-
-## Visual Direction
-
-Use a clean, modern visual style. Avoid generic placeholder UI.
-
-Good directions include:
-
-- soft contrast with strong readability
-- elegant typography
-- tactile buttons
-- subtle motion
-- clear state changes
-- satisfying completion feedback
-- pleasant color palette that is not visually exhausting in the morning
-
-Assets may be generated when they improve the experience, such as symbols, tiles, abstract backgrounds, icons, puzzle pieces, cards, or board elements.
-
-Do not create assets unless they genuinely help the game.
 
 ## Creativity Rules
 
 Before deciding the new game, compare against `memory.md`, existing game folders, and the arcade homepage.
 
-Avoid repeating:
-
-- same core mechanic
-- same visual identity
-- same puzzle structure
-- same scoring model
-- same theme
+Avoid repeating the same core mechanic, visual identity, puzzle structure, scoring model, or theme.
 
 Each game should include at least one distinctive twist.
 
-Possible puzzle families include:
-
-- pattern grids
-- symbolic logic
-- memory sequences
-- spatial routing
-- constraint placement
-- word association
-- number balancing
-- deduction boards
-- transformation puzzles
-- visual rhythm puzzles
-
-Do not simply copy those examples. Use them only as starting points.
+Possible puzzle families include pattern grids, symbolic logic, memory sequences, spatial routing, constraint placement, word association, number balancing, deduction boards, transformation puzzles, and visual rhythm puzzles. Do not simply copy those examples.
 
 ## Testing Checklist
 
@@ -194,45 +153,7 @@ After publishing each game, append an entry to `memory.md` using this format:
 
 The root arcade page is static. It does not automatically discover folders in the repository. Each daily run must update the `const games = [...]` array in `index.html` and add the new game object as the first entry.
 
-Each day, add the new game as a visible entry with:
-
-- game title
-- one-sentence description
-- date
-- brain skill trained
-- live GitHub Pages URL
-
-Keep the arcade page lightweight, responsive, static, and compatible with GitHub Pages.
-
-## Publish Guidance
-
-Use one clear commit in `CodexCloudBase`, such as:
-
-- `Add <game title> brain training game`
-- `Log <game title> and update arcade`
-
-After committing, ensure `origin` exists:
-
-`git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`
-
-Important: do not look for `GH_PUSH_TOKEN` during the agent phase. Codex environment secrets are consumed by the setup script before the task starts and may not be present as environment variables during the task. The setup script should have already configured Git credentials for `origin`.
-
-Before pushing, clear any injected GitHub credential header so Git uses the configured `origin` credentials:
-
-```bash
-git config --global --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
-git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
-```
-
-Do not run `git remote -v` or otherwise print authenticated remote URLs.
-
-Then push directly to `main`:
-
-`git push origin HEAD:main`
-
-Do not create a pull request and do not call `make_pr`.
-
-If direct pushes to `main` are blocked by repository permissions, missing credentials, missing remote configuration, branch protection, rulesets, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request or stopping after a local commit.
+Each day, add the new game as a visible entry with game title, one-sentence description, date, brain skill trained, and live GitHub Pages URL.
 
 ## Final Report
 
