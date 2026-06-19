@@ -40,9 +40,10 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
 12. Test the game locally in the cloud environment as much as available.
 13. Commit all changes with a clear message.
 14. Ensure the Git remote exists with `git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`.
-15. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
-16. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
-17. Report the live GitHub Pages URL for the new game.
+15. If `GH_PUSH_TOKEN` is available, configure the remote for this push with `git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"`. Do not print the token or run commands that display the remote URL after this step.
+16. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
+17. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
+18. Report the live GitHub Pages URL for the new game.
 
 A local commit is not complete. The run is only complete after the changes are pushed to GitHub `main`.
 
@@ -206,6 +207,12 @@ Use one clear commit in `CodexCloudBase`, such as:
 After committing, ensure `origin` exists:
 
 `git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`
+
+If `GH_PUSH_TOKEN` is available in the environment, configure authenticated push without printing the token:
+
+`git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"`
+
+Do not run `git remote -v` or otherwise print the authenticated URL after setting it.
 
 Then push directly to `main`:
 
