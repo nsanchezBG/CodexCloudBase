@@ -120,6 +120,24 @@
     .bar {
       background: linear-gradient(90deg, var(--a), var(--good));
     }
+
+    .color-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .color-chip::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--chip);
+      border: 1px solid rgba(41, 50, 49, 0.18);
+      box-shadow: inset 0 -2px 4px rgba(0,0,0,0.14);
+    }
   </style>
 </head>
 <body>
@@ -140,10 +158,20 @@
     </section>
   </main>
   <script>
-    const icons = ["✦","◆","●","▲","✚","⬟","✹","◇"]; const colors = ["#82e8ff","#ffcf6e","#c7ff86","#ff9fd0","#bba7ff","#8df0c5","#ffad7a","#d9f3ff"];
+    const icons = ["✦","◆","●","▲","✚","⬟","✹","◇"];
+    const colors = [
+      { hex: "#82e8ff", name: "cian" },
+      { hex: "#ffcf6e", name: "oro" },
+      { hex: "#c7ff86", name: "lima" },
+      { hex: "#ff9fd0", name: "rosa" },
+      { hex: "#bba7ff", name: "violeta" },
+      { hex: "#8df0c5", name: "menta" },
+      { hex: "#ffad7a", name: "coral" },
+      { hex: "#d9f3ff", name: "hielo" }
+    ];
     const puzzles = [
-      {name:"Apertura del Alba", brief:"Warm up with symbol adjacency across the inner and anillo medios.", start:[1,3,2], goal:[4,0,5]},
-      {name:"Dial del Cometa", brief:"Now the anillo exterior joins the lock pattern with opposite-sector checks.", start:[5,1,6], goal:[2,6,1]},
+      {name:"Apertura del Alba", brief:"Calienta con adyacencias de símbolos entre los anillos interior y medio.", start:[1,3,2], goal:[4,0,5]},
+      {name:"Dial del Cometa", brief:"Ahora el anillo exterior entra al patrón con verificaciones de sectores opuestos.", start:[5,1,6], goal:[2,6,1]},
       {name:"Pestillo de Aurora", brief:"Equilibra familias de color y mantén un triángulo lejos del visor norte.", start:[0,4,3], goal:[6,2,7]},
       {name:"Cifra del Cenit", brief:"Usa los sectores destacados como anclas e infiere los giros restantes.", start:[7,5,0], goal:[1,7,4]},
       {name:"Bóveda de Medianoche", brief:"Un cierre mixto final: adyacencias, opuestos y sectores exactos.", start:[3,6,5], goal:[7,3,2]}
@@ -152,14 +180,16 @@
     const orbit = document.querySelector('#orbit'), cluesEl = document.querySelector('#clues'), bar = document.querySelector('#bar'), statusEl = document.querySelector('#status');
     function at(ring, sector){ return (sector + offsets[ring]) % 8; }
     function symbol(ring, sector){ return icons[at(ring, sector)]; }
-    function color(ring, sector){ return colors[at(ring, sector)]; }
+    function color(ring, sector){ return colors[at(ring, sector)].hex; }
+    function colorName(index){ return colors[index].name; }
+    function colorClue(index){ return `<span class="color-chip" style="--chip:${colors[index].hex}">${colors[index].name}</span>`; }
     function rules(){ const g = puzzles[level].goal; const target = (ring, sector) => (sector + g[ring]) % 8; return [
       {t:`El norte interior debe mostrar ${icons[target(0,0)]}.`, ok:()=>at(0,0)===target(0,0)},
       {t:`El este medio debe mostrar ${icons[target(1,2)]}.`, ok:()=>at(1,2)===target(1,2)},
-      {t:`El oeste exterior debe brillar ${colors[target(2,6)]}.`, ok:()=>at(2,6)===target(2,6)},
-      {t:`Los visores sudeste deben leer ${icons[target(0,3)]}, ${icons[target(1,3)]}, then ${icons[target(2,3)]}.`, ok:()=>at(0,3)===target(0,3)&&at(1,3)===target(1,3)&&at(2,3)===target(2,3)}
+      {t:`El oeste exterior debe brillar en ${colorClue(target(2,6))}.`, ok:()=>at(2,6)===target(2,6)},
+      {t:`Los visores sudeste deben leer ${icons[target(0,3)]}, ${icons[target(1,3)]} y luego ${icons[target(2,3)]}.`, ok:()=>at(0,3)===target(0,3)&&at(1,3)===target(1,3)&&at(2,3)===target(2,3)}
     ]; }
-    function placeStars(){ orbit.querySelectorAll('.star').forEach(n=>n.remove()); [0,1,2].forEach(r=>{ const radius=[27,39,48][r]; for(let s=0;s<8;s++){ const a=(-90+s*45)*Math.PI/180; const star=document.createElement('button'); star.className='star'; star.type='button'; star.style.left=`${50+Math.cos(a)*radius}%`; star.style.top=`${50+Math.sin(a)*radius}%`; star.style.color=color(r,s); star.style.borderColor=color(r,s)+'55'; star.textContent=symbol(r,s); star.title=`Anillo ${r+1}, sector ${s+1}`; star.addEventListener('click',()=>rotate(r)); orbit.appendChild(star); }}); }
+    function placeStars(){ orbit.querySelectorAll('.star').forEach(n=>n.remove()); [0,1,2].forEach(r=>{ const radius=[27,39,48][r]; for(let s=0;s<8;s++){ const a=(-90+s*45)*Math.PI/180; const star=document.createElement('button'); star.className='star'; star.type='button'; star.style.left=`${50+Math.cos(a)*radius}%`; star.style.top=`${50+Math.sin(a)*radius}%`; star.style.color=color(r,s); star.style.borderColor=color(r,s)+'55'; star.textContent=symbol(r,s); star.title=`Anillo ${r+1}, sector ${s+1}, color ${colorName(at(r,s))}`; star.addEventListener('click',()=>rotate(r)); orbit.appendChild(star); }}); }
     function render(){ const p=puzzles[level]; document.querySelector('#puzzleName').textContent=`Puzzle ${level+1} de ${puzzles.length}`; document.querySelector('#title').textContent=p.name; document.querySelector('#brief').textContent=p.brief; placeStars(); const rs=rules(); const solved=rs.filter(r=>r.ok()).length; document.querySelector('#locks').textContent=`${solved}/${rs.length}`; bar.style.width=`${((level + solved/rs.length)/puzzles.length)*100}%`; cluesEl.innerHTML=''; rs.forEach(r=>{ const row=document.createElement('div'); row.className='clue'+(r.ok()?' ok':''); row.innerHTML=`<span class="dot"></span><span>${r.t}</span>`; cluesEl.appendChild(row); }); statusEl.textContent = solved===rs.length ? 'Bóveda abierta. Avanza a la siguiente órbita.' : `${solved} de ${rs.length} cierres alineados.`; }
     function rotate(r){ offsets[r]=(offsets[r]+1)%8; render(); }
     document.querySelectorAll('[data-ring]').forEach(b=>b.addEventListener('click',()=>rotate(Number(b.dataset.ring))));
