@@ -37,17 +37,20 @@ jobs:
             Commit the changes. Before pushing, ensure the Git remote exists with:
             git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git
 
-            If GH_PUSH_TOKEN is available in the environment, configure authenticated push without printing the token:
-            git remote set-url origin "https://x-access-token:\${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"
+            Do not look for GH_PUSH_TOKEN during the agent phase. It is a Codex environment secret used by the environment setup script before this task starts, so it may not be visible now. The setup script should already have configured Git credentials for origin.
 
-            Do not run git remote -v or otherwise print the authenticated URL after setting it.
+            Before pushing, clear any GitHub injected credential header so Git uses the configured origin credentials:
+            git config --global --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+            git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+
+            Do not run git remote -v or otherwise print authenticated remote URLs.
 
             Then push directly to GitHub main with:
             git push origin HEAD:main
 
             A local commit is not complete. Before reporting success, verify that the new game folder plus index.html and memory.md changes are visible on GitHub main.
 
-            Do not create a pull request and do not call make_pr. If direct pushes to main are blocked by permissions, missing credentials, missing remote configuration, branch protection, or the Codex environment, report that blocker clearly.
+            Do not create a pull request and do not call make_pr. If direct pushes to main are blocked by permissions, missing credentials, missing remote configuration, branch protection, rulesets, or the Codex environment, report that blocker clearly.
 
             Assume GitHub Pages is enabled for this base repository from branch main and folder /. Use this URL format for the new game:
             https://nsanchezBG.github.io/CodexCloudBase/<game-slug>/
