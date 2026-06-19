@@ -179,6 +179,8 @@ After publishing each game, append an entry to `memory.md` using this format:
 
 `CodexCloudBase/index.html` is the public arcade launcher for `NicoSavesTheWorld Brain Training`.
 
+The root arcade page is static. It does not automatically discover folders in the repository. Each daily run must update the `const games = [...]` array in `index.html` and add the new game object as the first entry.
+
 Each day, add the new game as a visible entry with:
 
 - game title
