@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prism Courier | NicoSavesTheWorld Brain Training</title>
+  <meta name="description" content="Route a courier through prism gates by predicting color transformations and matching delivery seals.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f7fb;
+      --panel: #ffffff;
+      --ink: #182235;
+      --muted: #65748b;
+      --line: #d9e2ef;
+      --cyan: #36a3c7;
+      --rose: #d85778;
+      --gold: #e1a63f;
+      --violet: #7a61d1;
+      --green: #4aa96c;
+      --shadow: 0 24px 60px rgba(24, 34, 53, 0.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(54, 163, 199, 0.24), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(216, 87, 120, 0.18), transparent 34rem),
+        linear-gradient(135deg, #f8fbff, var(--bg));
+    }
+    main { width: min(1120px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0 44px; }
+    .hero, .board-wrap, .side-card {
+      background: rgba(255,255,255,0.86);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .hero { padding: clamp(22px, 4vw, 38px); margin-bottom: 18px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; }
+    .eyebrow { margin: 0 0 10px; color: var(--violet); font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; }
+    h1 { margin: 0; font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: .92; letter-spacing: -.06em; }
+    .hero p:last-child { max-width: 720px; color: var(--muted); line-height: 1.65; font-size: 1.05rem; }
+    .score { min-width: 170px; padding: 18px; border-radius: 22px; background: #f7fbff; border: 1px solid var(--line); text-align: center; }
+    .score strong { display: block; font-size: 2rem; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; }
+    .board-wrap { padding: clamp(14px, 3vw, 26px); }
+    .toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .pill { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding: 0 13px; border-radius:999px; background:#f7fbff; border:1px solid var(--line); color:var(--muted); font-weight:750; }
+    button { border: 0; font: inherit; cursor: pointer; }
+    .action { min-height: 44px; padding: 0 16px; border-radius: 14px; background: var(--ink); color: white; font-weight: 850; }
+    .action.secondary { background: #e9f0f8; color: var(--ink); }
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; touch-action: manipulation; }
+    .cell { aspect-ratio: 1; border: 2px solid #d8e3ef; border-radius: 18px; background: #fbfdff; display:grid; place-items:center; position:relative; min-width:0; transition:.15s ease; }
+    .cell.path { border-color: var(--violet); background: rgba(122,97,209,.11); transform: translateY(-1px); }
+    .cell.current { outline: 4px solid rgba(122,97,209,.22); }
+    .cell.block { background: repeating-linear-gradient(135deg, #dce5ef, #dce5ef 8px, #cbd7e5 8px, #cbd7e5 16px); }
+    .cell.start::after, .cell.end::after { position:absolute; bottom:6px; font-size:.68rem; font-weight:900; color:var(--muted); }
+    .cell.start::after { content:"START"; } .cell.end::after { content:"SEAL"; }
+    .dot { width: 48%; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 -8px 14px rgba(0,0,0,.14), 0 8px 18px rgba(24,34,53,.16); }
+    .cyan { background: var(--cyan); } .rose { background: var(--rose); } .gold { background: var(--gold); } .violet { background: var(--violet); } .green { background: var(--green); }
+    .gate { width:58%; aspect-ratio:1; border-radius: 16px; display:grid; place-items:center; color:white; font-weight:950; font-size: clamp(1rem, 4vw, 1.45rem); box-shadow: 0 10px 22px rgba(24,34,53,.18); }
+    .gate.flip { background: linear-gradient(135deg, var(--cyan), var(--rose)); }
+    .gate.warm { background: linear-gradient(135deg, var(--rose), var(--gold)); }
+    .gate.cool { background: linear-gradient(135deg, var(--gold), var(--cyan)); }
+    .side-card { padding: 20px; display:grid; gap:16px; align-content:start; }
+    h2 { margin:0; font-size:1.1rem; }
+    .legend { display:grid; gap:10px; }
+    .rule { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px; border:1px solid var(--line); border-radius:16px; background:#fbfdff; color:var(--muted); font-weight:730; }
+    .message { min-height: 76px; padding:14px; border-radius:18px; background:#f7fbff; border:1px solid var(--line); color:var(--muted); line-height:1.45; }
+    .message.win { background: rgba(74,169,108,.12); color:#22583a; border-color:rgba(74,169,108,.35); }
+    .message.bad { background: rgba(216,87,120,.1); color:#81324a; border-color:rgba(216,87,120,.28); }
+    .seal-row, .moves { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .mini { width:28px; height:28px; border-radius:50%; box-shadow: inset 0 -5px 9px rgba(0,0,0,.14); }
+    @media (max-width: 880px) { .hero, .layout { grid-template-columns:1fr; } .score { text-align:left; } }
+    @media (max-width: 560px) { main { width:min(100% - 18px, 1120px); } .grid { gap:6px; } .cell { border-radius:12px; } .gate { border-radius:10px; } .cell.start::after,.cell.end::after{font-size:.52rem; bottom:3px;} }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Daily prism route</p>
+        <h1>Prism Courier</h1>
+        <p>Draw a path from the courier to the delivery seal. Every prism gate changes your carried color, so plan a route that arrives with the exact seal color before your moves run out.</p>
+      </div>
+      <div class="score"><span>Puzzles solved</span><strong id="solved">0 / 6</strong></div>
+    </section>
+    <section class="layout">
+      <div class="board-wrap">
+        <div class="toolbar">
+          <div class="pill" id="levelLabel">Puzzle 1</div>
+          <div class="pill">Carrying <span class="mini" id="carryDot"></span><span id="carryName">cyan</span></div>
+          <div class="pill">Moves <span id="movesLeft">0</span></div>
+          <div><button class="action secondary" id="undo">Undo</button> <button class="action" id="reset">Reset</button></div>
+        </div>
+        <div class="grid" id="grid" aria-label="Prism route board"></div>
+      </div>
+      <aside class="side-card">
+        <h2>Delivery seal</h2>
+        <div class="seal-row"><span class="mini" id="targetDot"></span><strong id="targetName"></strong></div>
+        <div class="message" id="message">Choose an adjacent tile. Gates transform the color you carry.</div>
+        <h2>Prism rules</h2>
+        <div class="legend">
+          <div class="rule"><span>↔ flip</span><span>cyan ↔ rose</span></div>
+          <div class="rule"><span>△ warm</span><span>rose → gold → green → rose</span></div>
+          <div class="rule"><span>◌ cool</span><span>gold → cyan → violet → gold</span></div>
+        </div>
+        <h2>Path memory</h2>
+        <div class="moves" id="trail"></div>
+      </aside>
+    </section>
+  </main>
+  <script>
+    const colors = ["cyan", "rose", "gold", "green", "violet"];
+    const colorNames = { cyan: "cyan", rose: "rose", gold: "gold", green: "green", violet: "violet" };
+    const transform = {
+      flip: { cyan: "rose", rose: "cyan", gold: "gold", green: "green", violet: "violet" },
+      warm: { rose: "gold", gold: "green", green: "rose", cyan: "cyan", violet: "violet" },
+      cool: { gold: "cyan", cyan: "violet", violet: "gold", rose: "rose", green: "green" }
+    };
+    const levels = [
+      { start:[5,0], end:[0,5], color:"cyan", target:"gold", limit:10, blocks:[[3,1],[3,2],[2,4]], gates:{"4,1":"flip","3,3":"warm","1,4":"cool"}},
+      { start:[0,0], end:[5,5], color:"rose", target:"violet", limit:11, blocks:[[1,2],[2,2],[4,3]], gates:{"0,2":"warm","2,4":"cool","4,4":"flip","3,1":"warm"}},
+      { start:[5,5], end:[0,0], color:"gold", target:"green", limit:12, blocks:[[1,1],[2,1],[3,4],[4,2]], gates:{"4,5":"cool","3,3":"flip","2,0":"warm","0,2":"warm"}},
+      { start:[2,0], end:[2,5], color:"violet", target:"rose", limit:9, blocks:[[1,2],[2,2],[3,2]], gates:{"0,1":"cool","0,3":"warm","2,4":"flip","4,3":"warm"}},
+      { start:[0,5], end:[5,0], color:"green", target:"cyan", limit:13, blocks:[[0,3],[1,3],[3,1],[4,4]], gates:{"1,5":"warm","2,4":"flip","3,3":"cool","5,2":"warm"}},
+      { start:[3,0], end:[0,3], color:"cyan", target:"green", limit:12, blocks:[[1,1],[1,4],[2,3],[4,2]], gates:{"4,0":"flip","5,1":"warm","3,2":"cool","2,2":"flip","0,2":"warm"}}
+    ];
+    let levelIndex = 0;
+    let solved = 0;
+    let path = [];
+    let carry = "cyan";
+    const grid = document.querySelector("#grid");
+    const message = document.querySelector("#message");
+    const carryDot = document.querySelector("#carryDot");
+    const targetDot = document.querySelector("#targetDot");
+    const trail = document.querySelector("#trail");
+    function key(r,c){ return `${r},${c}`; }
+    function currentLevel(){ return levels[levelIndex]; }
+    function resetLevel(note = "Plan the path, then tap adjacent tiles.") {
+      const level = currentLevel();
+      path = [{ pos: level.start, color: level.color }];
+      carry = level.color;
+      message.className = "message";
+      message.textContent = note;
+      render();
+    }
+    function render() {
+      const level = currentLevel();
+      const pathKeys = new Set(path.map(step => key(step.pos[0], step.pos[1])));
+      const current = path[path.length - 1].pos;
+      grid.innerHTML = "";
+      for (let r = 0; r < 6; r += 1) {
+        for (let c = 0; c < 6; c += 1) {
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "cell";
+          const k = key(r,c);
+          if (pathKeys.has(k)) cell.classList.add("path");
+          if (current[0] === r && current[1] === c) cell.classList.add("current");
+          if (level.blocks.some(([br,bc]) => br === r && bc === c)) cell.classList.add("block");
+          if (level.start[0] === r && level.start[1] === c) cell.classList.add("start");
+          if (level.end[0] === r && level.end[1] === c) cell.classList.add("end");
+          if (level.gates[k]) {
+            const gate = document.createElement("span");
+            gate.className = `gate ${level.gates[k]}`;
+            gate.textContent = level.gates[k] === "flip" ? "↔" : level.gates[k] === "warm" ? "△" : "◌";
+            cell.appendChild(gate);
+          } else if (level.end[0] === r && level.end[1] === c) {
+            const dot = document.createElement("span");
+            dot.className = `dot ${level.target}`;
+            cell.appendChild(dot);
+          }
+          cell.addEventListener("click", () => move(r,c));
+          grid.appendChild(cell);
+        }
+      }
+      document.querySelector("#levelLabel").textContent = `Puzzle ${levelIndex + 1} of ${levels.length}`;
+      document.querySelector("#solved").textContent = `${solved} / ${levels.length}`;
+      document.querySelector("#movesLeft").textContent = String(level.limit - (path.length - 1));
+      carryDot.className = `mini ${carry}`;
+      targetDot.className = `mini ${level.target}`;
+      document.querySelector("#carryName").textContent = colorNames[carry];
+      document.querySelector("#targetName").textContent = colorNames[level.target];
+      trail.innerHTML = "";
+      path.forEach(step => { const chip = document.createElement("span"); chip.className = `mini ${step.color}`; trail.appendChild(chip); });
+    }
+    function move(r,c) {
+      const level = currentLevel();
+      const last = path[path.length - 1].pos;
+      const distance = Math.abs(last[0] - r) + Math.abs(last[1] - c);
+      const blocked = level.blocks.some(([br,bc]) => br === r && bc === c);
+      if (distance !== 1 || blocked) return flash("Choose an open tile directly next to the courier.", "bad");
+      if (path.some(step => step.pos[0] === r && step.pos[1] === c)) return flash("The courier cannot cross the same tile twice.", "bad");
+      let nextColor = carry;
+      const gate = level.gates[key(r,c)];
+      if (gate) nextColor = transform[gate][carry];
+      path.push({ pos:[r,c], color: nextColor });
+      carry = nextColor;
+      const movesUsed = path.length - 1;
+      if (level.end[0] === r && level.end[1] === c) {
+        if (carry === level.target) return completeLevel();
+        flash(`Arrived with ${carry}, but the seal needs ${level.target}. Undo and route through different prisms.`, "bad");
+      } else if (movesUsed >= level.limit) {
+        flash("No moves remain. Reset this puzzle and try a shorter prism route.", "bad");
+      } else {
+        flash(gate ? `The ${gate} prism changed your color to ${carry}.` : "Good step. Keep the seal color in mind.");
+      }
+      render();
+    }
+    function flash(text, tone = "") { message.className = `message ${tone}`; message.textContent = text; }
+    function completeLevel() {
+      solved = Math.max(solved, levelIndex + 1);
+      flash("Delivered with the exact color. Loading the next route...", "win");
+      render();
+      setTimeout(() => { levelIndex = (levelIndex + 1) % levels.length; resetLevel(levelIndex === 0 ? "Full loop complete. Replay to sharpen your route intuition." : "New prism route ready."); }, 900);
+    }
+    document.querySelector("#undo").addEventListener("click", () => { if (path.length > 1) { path.pop(); carry = path[path.length - 1].color; flash("Step undone. Recalculate from here."); render(); } });
+    document.querySelector("#reset").addEventListener("click", () => resetLevel("Puzzle reset. Try a cleaner route."));
+    resetLevel();
+  </script>
+</body>
+</html>

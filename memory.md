@@ -1,3 +1,12 @@
+## 2026-06-19 - Prism Courier
+
+- Folder: prism-courier-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/prism-courier-2026-06-19/
+- Core mechanic: Route a courier across a 6x6 board without revisiting tiles while prism gates transform the carried color; arrive at each seal with the exact target color within the move limit.
+- Visual style: Clean glassy prism palette with cyan, rose, gold, green, and violet color chips on soft blue-white panels.
+- Brain skill trained: Route planning, transformation logic, working memory, and spatial reasoning.
+- Notes to avoid repeating: Do not reuse color-carrying route paths, prism gate transformations, no-revisit courier movement, or delivery seal theming in the next games.
+
 ## 2026-06-19 - Shadow Cartographer
 
 - Folder: shadow-cartographer-2026-06-19/
