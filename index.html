@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NicoSavesTheWorld</title>
   <meta name="description" content="Juegos mentales de NicoSavesTheWorld.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light;
@@ -33,7 +36,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Rubik, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
       background:
         linear-gradient(90deg, rgba(28,26,28,0.035) 1px, transparent 1px),
@@ -115,25 +118,28 @@
     }
 
     .meta {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      color: rgba(28, 26, 28, 0.76);
-      font-size: 0.78rem;
-      font-weight: 720;
-    }
-
-    .meta span {
       position: relative;
+      display: flex;
+      justify-content: center;
+      min-height: 30px;
     }
 
-    .dot {
-      width: 4px;
-      height: 4px;
-      align-self: center;
-      border-radius: 50%;
-      background: var(--accent);
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      max-width: 100%;
+      padding: 0 12px;
+      border: 1px solid rgba(28, 26, 28, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.42);
+      color: rgba(28, 26, 28, 0.78);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+      font-size: 0.76rem;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
     }
 
     .game-card h3 {
@@ -232,7 +238,7 @@
       <img class="brand-logo" src="cerebrologo.png" alt="NicoSavesTheWorld">
     </section>
 
-    <section class="grid" id="game-grid" aria-label="Juegos publicados"></section>
+    <section class="grid" id="game-grid" aria-label="Juegos"></section>
     <p class="empty" id="empty-state">Todavía no hay juegos.</p>
   </main>
 
@@ -240,42 +246,36 @@
     const games = [
       {
         title: "Magistrado del Mosaico",
-        date: "2026-06-19",
         skill: "Grillas lógicas",
         description: "Restaura mosaicos de juzgado alternando marcas de gremio hasta que cuadren el equilibrio latino y las leyes extra.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/mosaic-magistrate-2026-06-19/"
       },
       {
         title: "Cerrajero Orbital",
-        date: "2026-06-19",
         skill: "Lógica de patrones",
         description: "Gira tres anillos orbitales hasta que las pistas del telescopio alineen símbolos, colores y sectores.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/orbit-locksmith-2026-06-19/"
       },
       {
         title: "Mensajero Prisma",
-        date: "2026-06-19",
         skill: "Planificación de rutas",
         description: "Guía a un mensajero con color por puertas prisma y predice cambios para igualar cada sello.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/prism-courier-2026-06-19/"
       },
       {
         title: "Cartógrafo de Sombras",
-        date: "2026-06-19",
         skill: "Deducción espacial",
         description: "Reconstruye sombras ocultas en islas 5x5 usando conteos de filas, columnas y notas del terreno.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/shadow-cartographer-2026-06-19/"
       },
       {
         title: "Registro de Faroles",
-        date: "2026-06-19",
         skill: "Deducción aritmética",
         description: "Equilibra registros de faroles llenando una grilla 4x4 con pistas de filas, columnas, valores fijos y distrito.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/lantern-ledger-2026-06-19/"
       },
       {
         title: "Huerto de Ecos",
-        date: "2026-06-19",
         skill: "Memoria secuencial",
         description: "Memoriza melodías de fruta, transfórmalas con reglas cambiantes del huerto y reproduce el eco.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/echo-orchard-2026-06-19/"
@@ -295,11 +295,8 @@
 
         const meta = document.createElement("div");
         meta.className = "meta";
-        const date = document.createElement("span");
-        date.textContent = game.date;
-        const dot = document.createElement("span");
-        dot.className = "dot";
         const skill = document.createElement("span");
+        skill.className = "skill-pill";
         skill.textContent = game.skill;
 
         const body = document.createElement("div");
@@ -313,7 +310,7 @@
         link.href = game.url;
         link.textContent = "Jugar";
 
-        meta.append(date, dot, skill);
+        meta.append(skill);
         body.append(title, description);
         article.append(meta, body, link);
         grid.appendChild(article);
