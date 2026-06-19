@@ -1,3 +1,12 @@
+## 2026-06-19 - Mosaic Magistrate
+
+- Folder: mosaic-magistrate-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/mosaic-magistrate-2026-06-19/
+- Core mechanic: Cycle four guild symbols into 4x4 mosaic grids so every row and column contains one of each symbol while additional diagonal, corner, edge, and center laws identify the unique solution.
+- Visual style: Warm courthouse parchment and ivory tiles with teal, copper, and violet accents, rounded panels, and polished tactile stone buttons.
+- Brain skill trained: Latin-square logic, constraint deduction, spatial indexing, and attention.
+- Notes to avoid repeating: Do not reuse 4x4 symbol Latin-square mosaics, courthouse magistrate law theming, or tap-to-cycle guild marks constrained by row/column uniqueness in the next games.
+
 ## 2026-06-19 - Prism Courier
 
 - Folder: prism-courier-2026-06-19/
