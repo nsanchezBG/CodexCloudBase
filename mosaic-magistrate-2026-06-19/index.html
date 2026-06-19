@@ -1,49 +1,828 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mosaic Magistrate</title>
-  <meta name="description" content="A calm logic puzzle about restoring mosaic guild symbols from row, column, and adjacency laws.">
+  <title>Magistrado del Mosaico | Entrenamiento Mental NicoSavesTheWorld</title>
+  <meta name="description" content="Un puzzle geométrico tranquilo sobre restaurar mosaicos con reglas de filas, columnas y pistas.">
   <style>
-    :root{--bg:#f2efe8;--panel:#fffaf0;--ink:#20252a;--muted:#66706c;--line:#d9cfbd;--a:#256d77;--b:#c97752;--c:#7157a8;--good:#227a5a;--bad:#b54848;--shadow:0 18px 45px rgba(42,34,22,.14)}
-    *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 10%,rgba(37,109,119,.18),transparent 28%),radial-gradient(circle at 90% 20%,rgba(201,119,82,.2),transparent 30%),var(--bg)}
-    main{width:min(1120px,calc(100% - 28px));margin:0 auto;padding:28px 0 42px}.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:end;margin-bottom:18px}.card{background:rgba(255,250,240,.9);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}.intro{padding:24px}p{line-height:1.55;color:var(--muted)}h1{margin:.1rem 0;font-size:clamp(2.3rem,7vw,5.3rem);line-height:.92}.eyebrow{margin:0;color:var(--a);font-weight:900;text-transform:uppercase;font-size:.78rem;letter-spacing:.12em}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}.stat{padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line)}.stat b{display:block;font-size:1.35rem}.game{display:grid;grid-template-columns:minmax(300px,520px) 1fr;gap:18px}.board-wrap{padding:18px}.board{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tile{aspect-ratio:1;border:0;border-radius:18px;background:#fff;border:2px solid var(--line);font-size:clamp(2rem,8vw,3.6rem);box-shadow:inset 0 -7px 0 rgba(0,0,0,.04);cursor:pointer;transition:.15s transform,.15s border-color}.tile:hover,.tile:focus-visible{transform:translateY(-2px);outline:none;border-color:var(--a)}.tile.locked{background:#ebe4d7;cursor:not-allowed}.tile.problem{border-color:var(--bad)}.tile.good{border-color:var(--good)}.side{padding:18px;display:grid;gap:14px}.laws{margin:0;padding-left:20px}.laws li{margin:8px 0;line-height:1.45}.controls{display:flex;flex-wrap:wrap;gap:10px}.btn{min-height:44px;border:0;border-radius:999px;padding:0 16px;background:var(--ink);color:#fff;font-weight:850;cursor:pointer}.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}.message{min-height:48px;padding:13px 14px;border-radius:16px;background:#fff;border:1px solid var(--line);font-weight:750}.legend{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:750}.note{font-size:.92rem}.win{background:rgba(34,122,90,.12);border-color:rgba(34,122,90,.35);color:#145a3f}@media (max-width:820px){.hero,.game{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}}@media (max-width:520px){main{width:min(100% - 18px,1120px);padding-top:16px}.board{gap:7px}.tile{border-radius:14px}.intro,.side,.board-wrap{padding:14px}}
+    :root {
+      color-scheme: light;
+      --bg: #eef2f0;
+      --surface: #fbfcfa;
+      --surface-2: #e5ebe8;
+      --ink: #293231;
+      --muted: #71807b;
+      --line: #d7dfdb;
+      --accent: #cf6f78;
+      --accent-2: #8aa39b;
+      --good: #4f8a68;
+      --bad: #b95f65;
+      --shadow: 0 22px 60px rgba(41, 50, 49, 0.1);
+      --radius: 8px;
+      --ease: 180ms ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.26) 1px, transparent 1px),
+        var(--bg);
+      background-size: 52px 52px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1080px, calc(100% - 28px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      padding: 28px 0;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+    }
+
+    body[data-screen="splash"] .screen-splash,
+    body[data-screen="brief"] .screen-brief,
+    body[data-screen="game"] .screen-game {
+      display: block;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(251, 252, 250, 0.82);
+      box-shadow: var(--shadow);
+    }
+
+    .splash {
+      min-height: min(760px, calc(100vh - 56px));
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(300px, 1.08fr);
+      gap: 34px;
+      align-items: center;
+      padding: clamp(20px, 5vw, 48px);
+    }
+
+    .brand-mark {
+      display: grid;
+      grid-template-columns: repeat(4, 32px);
+      grid-auto-rows: 32px;
+      gap: 14px;
+      width: max-content;
+      margin-bottom: 34px;
+    }
+
+    .brand-mark span {
+      width: 32px;
+      height: 32px;
+      background: var(--ink);
+      transform: rotate(45deg);
+    }
+
+    .brand-mark span:nth-child(2),
+    .brand-mark span:nth-child(7),
+    .brand-mark span:nth-child(12) {
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .brand-mark span:nth-child(5) {
+      background: var(--accent);
+    }
+
+    .brand-mark span:nth-child(10) {
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 600px;
+      margin-bottom: 16px;
+      font-size: clamp(2.6rem, 8vw, 6.2rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      max-width: 520px;
+      margin-bottom: 26px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.62;
+    }
+
+    .preview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 430px;
+      margin-left: auto;
+    }
+
+    .preview span {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .preview span:nth-child(2n) {
+      background: var(--surface-2);
+    }
+
+    .preview span:nth-child(3),
+    .preview span:nth-child(6),
+    .preview span:nth-child(12) {
+      background: var(--ink);
+      transform: rotate(45deg) scale(0.72);
+      border: 0;
+    }
+
+    .preview span:nth-child(9) {
+      background: var(--accent);
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      border: 0;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.94rem;
+      font-weight: 760;
+      line-height: 1;
+      transition: transform var(--ease), background var(--ease), border-color var(--ease);
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      background: #3b4543;
+      border-color: #3b4543;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .btn.secondary:hover,
+    .btn.secondary:focus-visible {
+      background: var(--surface);
+      border-color: var(--accent-2);
+    }
+
+    .brief {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(20px, 5vw, 40px);
+    }
+
+    .brief h2 {
+      margin-bottom: 20px;
+      font-size: clamp(2rem, 6vw, 4.4rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 26px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rule-list li {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 56px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.48);
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .rule-list b {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.86rem;
+    }
+
+    .game-shell {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.94fr) minmax(280px, 0.56fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .play-surface {
+      padding: clamp(14px, 3vw, 24px);
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      min-height: 58px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.48);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 720;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(8px, 2vw, 12px);
+      width: min(100%, 560px);
+      margin: 0 auto;
+    }
+
+    .tile {
+      position: relative;
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.58);
+      cursor: pointer;
+      transition: transform var(--ease), border-color var(--ease), background var(--ease), box-shadow var(--ease);
+    }
+
+    .tile:hover,
+    .tile:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+      border-color: var(--accent-2);
+      box-shadow: 0 14px 26px rgba(41, 50, 49, 0.08);
+    }
+
+    .tile.locked {
+      background: var(--surface-2);
+      cursor: default;
+    }
+
+    .tile.locked::after {
+      content: "";
+      position: absolute;
+      right: 7px;
+      top: 7px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-2);
+    }
+
+    .tile.problem {
+      border-color: var(--bad);
+      background: rgba(185, 95, 101, 0.1);
+    }
+
+    .tile.good {
+      border-color: var(--good);
+      background: rgba(79, 138, 104, 0.1);
+    }
+
+    .mark-shape {
+      display: block;
+      width: 42%;
+      height: 42%;
+      background: var(--ink);
+      transition: transform var(--ease), opacity var(--ease);
+    }
+
+    .m0 {
+      transform: rotate(45deg);
+    }
+
+    .m1 {
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .m2 {
+      width: 48%;
+      height: 48%;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      background: var(--accent-2);
+    }
+
+    .m3 {
+      position: relative;
+      width: 46%;
+      height: 46%;
+      background: transparent;
+    }
+
+    .m3::before,
+    .m3::after {
+      content: "";
+      position: absolute;
+      inset: 42% 0;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    .m3::after {
+      transform: rotate(90deg);
+    }
+
+    .placeholder {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+
+    .side {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .side-header {
+      display: grid;
+      gap: 6px;
+    }
+
+    .side h2 {
+      margin: 0;
+      font-size: 1.18rem;
+      letter-spacing: 0;
+    }
+
+    .briefline {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(255,255,255,0.42);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .chip .mark-shape {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+    }
+
+    .laws {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .laws li {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(255,255,255,0.42);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .message {
+      min-height: 50px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.5);
+      color: var(--muted);
+      font-size: 0.93rem;
+      font-weight: 720;
+      line-height: 1.42;
+    }
+
+    .message.win {
+      color: #275c3d;
+      border-color: rgba(79, 138, 104, 0.42);
+      background: rgba(79, 138, 104, 0.12);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .controls .btn:first-child {
+      grid-column: 1 / -1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .splash,
+      .game-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .preview {
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .app {
+        width: min(100% - 18px, 1080px);
+        padding: 16px 0;
+        place-items: start center;
+      }
+
+      .splash {
+        min-height: calc(100vh - 32px);
+        padding: 18px;
+        align-content: center;
+      }
+
+      .brand-mark {
+        grid-template-columns: repeat(4, 24px);
+        grid-auto-rows: 24px;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+
+      .brand-mark span {
+        width: 24px;
+        height: 24px;
+      }
+
+      .preview {
+        gap: 8px;
+      }
+
+      .brief,
+      .play-surface,
+      .side {
+        padding: 14px;
+      }
+
+      .game-shell {
+        gap: 12px;
+      }
+
+      .hud {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .stat {
+        min-height: 52px;
+        padding: 9px;
+      }
+
+      .stat strong {
+        font-size: 1.04rem;
+      }
+
+      .board {
+        gap: 7px;
+      }
+
+      .legend {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .laws li {
+        font-size: 0.86rem;
+      }
+    }
   </style>
 </head>
-<body>
-<main>
-  <section class="hero">
-    <div class="intro card"><p class="eyebrow">Daily mental puzzle</p><h1>Mosaic Magistrate</h1><p>Restore each courthouse mosaic by assigning four guild marks. Every row and column needs one of each mark, while the magistrate's extra laws control diagonals and neighboring tiles.</p></div>
-    <div class="stats card"><div class="stat"><span>Puzzle</span><b id="level">1/5</b></div><div class="stat"><span>Mistakes</span><b id="mistakes">0</b></div><div class="stat"><span>Solved</span><b id="solved">0</b></div></div>
-  </section>
-  <section class="game">
-    <div class="board-wrap card"><div class="board" id="board" aria-label="Mosaic board"></div></div>
-    <aside class="side card">
-      <div class="legend" id="legend"></div>
-      <div><h2 id="name">Puzzle</h2><p class="note" id="brief"></p><ol class="laws" id="laws"></ol></div>
-      <div class="message" id="message">Tap blank stones to cycle guild marks. Locked stones are fixed clues.</div>
-      <div class="controls"><button class="btn" id="check">Check mosaic</button><button class="btn secondary" id="hint">Hint</button><button class="btn secondary" id="reset">Reset</button><button class="btn secondary" id="next">Next puzzle</button></div>
-    </aside>
-  </section>
-</main>
-<script>
-const symbols=["◆","●","▲","✦"];
-const names=["Diamond","Moon","Spire","Star"];
-const puzzles=[
- {name:"North Gate",brief:"Warm up with a clean Latin mosaic and two diagonal laws.",givens:{"0":0,"6":0,"9":0,"15":0},solution:[0,1,2,3,2,3,0,1,1,0,3,2,3,2,1,0],laws:["Each row and column contains ◆ ● ▲ ✦ exactly once.","The main diagonal is all ◆.","The two center stones are ◆ and ◆."]},
- {name:"River Court",brief:"Read the edges carefully: two neighbor pairs must avoid matching shapes.",givens:{"1":2,"4":3,"11":3,"14":2},solution:[1,2,3,0,3,0,1,2,2,1,0,3,0,3,2,1],laws:["Every row and column uses all four guild marks.","Top-right and bottom-left corners are ◆.","The left edge alternates ●, ✦, ▲, ◆ from top to bottom."]},
- {name:"Glass Atrium",brief:"The star stones form a staircase, but rows and columns still balance.",givens:{"2":1,"5":2,"8":3,"15":2},solution:[2,3,1,0,0,2,3,1,3,1,0,2,1,0,2,3],laws:["Every row and column contains one of each mark.","Stars sit at row 1 column 2 and row 3 column 1.","The bottom row reads ●, ◆, ▲, ✦."]},
- {name:"Copper Annex",brief:"Use opposite corners and the middle box to pin down the pattern.",givens:{"0":3,"3":2,"12":2,"15":3,"5":3},solution:[3,0,1,2,1,3,2,0,0,2,3,1,2,1,0,3],laws:["Every row and column uses ◆ ● ▲ ✦ once.","Opposite corners match: ✦ with ✦, ▲ with ▲.","The central 2×2 block contains ✦, ▲, ▲, ✦."]},
- {name:"Sunset Verdict",brief:"Final case: a rotated order hides behind sparse fixed stones.",givens:{"0":2,"7":2,"10":2,"13":2},solution:[2,0,3,1,1,3,0,2,3,1,2,0,0,2,1,3],laws:["Every row and column contains all four guild marks.","All ▲ stones lie on a descending step from top-left to lower-middle.","The top row contains ▲ before ◆ before ✦ before ●."]}
-];
-let level=0, grid=[], mistakes=0, solved=0;
-const board=document.querySelector('#board'), msg=document.querySelector('#message');
-function start(){const p=puzzles[level];grid=p.solution.map((_,i)=>p.givens[i]??null);document.querySelector('#level').textContent=`${level+1}/${puzzles.length}`;document.querySelector('#name').textContent=p.name;document.querySelector('#brief').textContent=p.brief;document.querySelector('#laws').innerHTML=p.laws.map(l=>`<li>${l}</li>`).join('');document.querySelector('#legend').innerHTML=symbols.map((s,i)=>`<span class="chip">${s} ${names[i]}</span>`).join('');msg.className='message';msg.textContent='Tap blank stones to cycle guild marks. Locked stones are fixed clues.';draw();}
-function draw(){const p=puzzles[level];board.innerHTML='';grid.forEach((v,i)=>{const b=document.createElement('button');b.className='tile';b.textContent=v===null?'·':symbols[v];b.setAttribute('aria-label',`row ${Math.floor(i/4)+1} column ${i%4+1}`);if(p.givens[i]!==undefined)b.classList.add('locked');b.addEventListener('click',()=>{if(p.givens[i]!==undefined)return;grid[i]=grid[i]===null?0:(grid[i]+1)%4;draw();});board.appendChild(b);});document.querySelector('#mistakes').textContent=mistakes;document.querySelector('#solved').textContent=solved;}
-function check(){const p=puzzles[level];let ok=true;[...board.children].forEach((el,i)=>{el.classList.remove('problem','good');if(grid[i]===p.solution[i])el.classList.add('good');else{el.classList.add('problem');ok=false;}});if(ok){solved=Math.max(solved,level+1);msg.className='message win';msg.textContent=level===puzzles.length-1?'All verdicts restored. The arcade court is in session!':'Correct mosaic. Advance to the next case when ready.';}else{mistakes++;msg.className='message';msg.textContent='Some stones break the magistrate laws. Red borders show places to reconsider.';}draw();}
-function hint(){const p=puzzles[level];const i=grid.findIndex((v,idx)=>v!==p.solution[idx]);if(i<0){msg.textContent='This mosaic is already complete. Check it!';return;}grid[i]=p.solution[i];msg.textContent=`Hint placed at row ${Math.floor(i/4)+1}, column ${i%4+1}.`;draw();}
-document.querySelector('#check').onclick=check;document.querySelector('#hint').onclick=hint;document.querySelector('#reset').onclick=start;document.querySelector('#next').onclick=()=>{level=(level+1)%puzzles.length;start();};start();
-</script>
+<body data-screen="splash">
+  <main class="app">
+    <section class="screen screen-splash">
+      <div class="splash panel">
+        <div>
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <h1>Magistrado del Mosaico</h1>
+          <p class="lede">Restaura mosaicos geométricos haciendo que cada fila y columna quede equilibrada.</p>
+          <div class="actions">
+            <button class="btn" type="button" data-go="brief">Iniciar</button>
+            <button class="btn secondary" type="button" data-go="game">Saltar</button>
+          </div>
+        </div>
+        <div class="preview" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen screen-brief">
+      <div class="brief panel">
+        <h2>Tres reglas.</h2>
+        <ol class="rule-list">
+          <li><b>1</b><span>Cada fila usa las cuatro marcas una vez.</span></li>
+          <li><b>2</b><span>Cada columna usa las cuatro marcas una vez.</span></li>
+          <li><b>3</b><span>Cada puzzle añade algunas leyes discretas.</span></li>
+        </ol>
+        <div class="actions">
+          <button class="btn" type="button" data-go="game">Jugar</button>
+          <button class="btn secondary" type="button" data-go="splash">Volver</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen screen-game">
+      <div class="game-shell">
+        <section class="play-surface panel" aria-label="Tablero de mosaico">
+          <div class="hud">
+            <div class="stat"><span>Nivel</span><strong id="level">01/05</strong></div>
+            <div class="stat"><span>Errores</span><strong id="mistakes">0</strong></div>
+            <div class="stat"><span>Resueltos</span><strong id="solved">0</strong></div>
+          </div>
+          <div class="board" id="board"></div>
+        </section>
+
+        <aside class="side panel">
+          <div class="side-header">
+            <h2 id="name">Puzzle</h2>
+            <p class="briefline" id="brief"></p>
+          </div>
+          <div class="legend" id="legend" aria-label="Leyenda de marcas"></div>
+          <ul class="laws" id="laws"></ul>
+          <div class="message" id="message">Toca una casilla libre para cambiar marcas.</div>
+          <div class="controls">
+            <button class="btn" id="check" type="button">Revisar</button>
+            <button class="btn secondary" id="hint" type="button">Pista</button>
+            <button class="btn secondary" id="reset" type="button">Reiniciar</button>
+            <button class="btn secondary" id="next" type="button">Siguiente</button>
+            <button class="btn secondary" type="button" data-go="brief">Reglas</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const marks = [
+      { name: "Diamante", className: "m0" },
+      { name: "Luna", className: "m1" },
+      { name: "Cima", className: "m2" },
+      { name: "Cruz", className: "m3" }
+    ];
+
+    const puzzles = [
+      {
+        name: "Puerta Norte",
+        brief: "Una diagonal limpia abre la serie.",
+        givens: { 0: 0, 6: 0, 9: 0, 15: 0 },
+        solution: [0,1,2,3,2,3,0,1,1,0,3,2,3,2,1,0],
+        laws: ["Filas y columnas contienen las cuatro marcas.", "La diagonal principal es toda de diamantes.", "Las dos pistas centrales son diamantes."]
+      },
+      {
+        name: "Patio del Río",
+        brief: "Los bordes fijan el patrón.",
+        givens: { 1: 2, 4: 3, 11: 3, 14: 2 },
+        solution: [1,2,3,0,3,0,1,2,2,1,0,3,0,3,2,1],
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Arriba derecha y abajo izquierda son diamantes.", "El borde izquierdo dice luna, cruz, cima, diamante."]
+      },
+      {
+        name: "Atrio de Vidrio",
+        brief: "Una escalera de cruces oculta el orden.",
+        givens: { 2: 1, 5: 2, 8: 3, 15: 2 },
+        solution: [2,3,1,0,0,2,3,1,3,1,0,2,1,0,2,3],
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Cruzes sit at row 1 column 2 and row 3 column 1.", "La fila inferior dice luna, diamante, cima, cruz."]
+      },
+      {
+        name: "Anexo de Cobre",
+        brief: "Esquinas y bloque central coinciden.",
+        givens: { 0: 3, 3: 2, 12: 2, 15: 3, 5: 3 },
+        solution: [3,0,1,2,1,3,2,0,0,2,3,1,2,1,0,3],
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Las esquinas opuestas coinciden por pares.", "El bloque central 2x2 se refleja a sí mismo."]
+      },
+      {
+        name: "Veredicto del Atardecer",
+        brief: "Pocas piedras revelan una rotación.",
+        givens: { 0: 2, 7: 2, 10: 2, 13: 2 },
+        solution: [2,0,3,1,1,3,0,2,3,1,2,0,0,2,1,3],
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Cima marks descend in a loose step.", "La fila superior empieza con cima y luego diamante."]
+      }
+    ];
+
+    let level = 0;
+    let grid = [];
+    let mistakes = 0;
+    let solved = 0;
+
+    const board = document.querySelector("#board");
+    const message = document.querySelector("#message");
+    const ids = Object.fromEntries(["level", "mistakes", "solved", "name", "brief", "laws", "legend"].map((id) => [id, document.getElementById(id)]));
+
+    document.querySelectorAll("[data-go]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.body.dataset.screen = button.dataset.go;
+      });
+    });
+
+    function start() {
+      const puzzle = puzzles[level];
+      grid = puzzle.solution.map((_, index) => puzzle.givens[index] ?? null);
+      ids.level.textContent = `${String(level + 1).padIniciar(2, "0")}/${String(puzzles.length).padIniciar(2, "0")}`;
+      ids.name.textContent = puzzle.name;
+      ids.brief.textContent = puzzle.brief;
+      ids.laws.innerHTML = puzzle.laws.map((law) => `<li>${law}</li>`).join("");
+      ids.legend.innerHTML = marks.map((mark, index) => `<span class="chip"><span class="mark-shape ${mark.className}"></span>${mark.name}</span>`).join("");
+      message.className = "message";
+      message.textContent = "Toca una casilla libre para cambiar marcas.";
+      draw();
+    }
+
+    function draw() {
+      const puzzle = puzzles[level];
+      board.innerHTML = "";
+      grid.forEach((value, index) => {
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "tile";
+        tile.setAttribute("aria-label", `fila ${Math.floor(index / 4) + 1}, columna ${(index % 4) + 1}`);
+
+        if (puzzle.givens[index] !== undefined) {
+          tile.classList.add("locked");
+        }
+
+        if (value === null) {
+          const placeholder = document.createElement("span");
+          placeholder.className = "placeholder";
+          tile.appendChild(placeholder);
+        } else {
+          const shape = document.createElement("span");
+          shape.className = `mark-shape ${marks[value].className}`;
+          tile.appendChild(shape);
+        }
+
+        tile.addEventListener("click", () => {
+          if (puzzle.givens[index] !== undefined) return;
+          grid[index] = grid[index] === null ? 0 : (grid[index] + 1) % marks.length;
+          message.className = "message";
+          message.textContent = "Marca colocada. Mantén las filas equilibradas.";
+          draw();
+        });
+
+        board.appendChild(tile);
+      });
+
+      ids.mistakes.textContent = String(mistakes);
+      ids.solved.textContent = String(solved);
+    }
+
+    function check() {
+      const puzzle = puzzles[level];
+      let ok = true;
+      [...board.children].forEach((tile, index) => {
+        tile.classList.remove("problem", "good");
+        if (grid[index] === puzzle.solution[index]) {
+          tile.classList.add("good");
+        } else {
+          tile.classList.add("problem");
+          ok = false;
+        }
+      });
+
+      if (ok) {
+        solved = Math.max(solved, level + 1);
+        message.className = "message win";
+        message.textContent = level === puzzles.length - 1 ? "Todos los mosaicos fueron restaurados." : "Resueltos. Move to the next mosaic.";
+      } else {
+        mistakes += 1;
+        message.className = "message";
+        message.textContent = "Algunas marcas rompen las leyes.";
+      }
+
+      ids.mistakes.textContent = String(mistakes);
+      ids.solved.textContent = String(solved);
+    }
+
+    function hint() {
+      const puzzle = puzzles[level];
+      const index = grid.findIndex((value, cell) => value !== puzzle.solution[cell]);
+
+      if (index < 0) {
+        message.className = "message win";
+        message.textContent = "Este mosaico está completo.";
+        return;
+      }
+
+      grid[index] = puzzle.solution[index];
+      message.className = "message";
+      message.textContent = `Pista placed at row ${Math.floor(index / 4) + 1}, column ${(index % 4) + 1}.`;
+      draw();
+    }
+
+    document.querySelector("#check").addEventListener("click", check);
+    document.querySelector("#hint").addEventListener("click", hint);
+    document.querySelector("#reset").addEventListener("click", start);
+    document.querySelector("#next").addEventListener("click", () => {
+      level = (level + 1) % puzzles.length;
+      start();
+    });
+
+    start();
+  </script>
 </body>
 </html>

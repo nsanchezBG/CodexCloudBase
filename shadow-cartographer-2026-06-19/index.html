@@ -1,36 +1,54 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Shadow Cartographer</title>
+<title>Cartógrafo de Sombras | Entrenamiento Mental NicoSavesTheWorld</title>
+<meta name="description" content="Un puzzle tranquilo de deducción espacial sobre reconstruir sombras ocultas en islas 5x5.">
 <style>
 :root{--ink:#13362f;--sea:#dff4ef;--paper:#fff8e8;--gold:#d9a441;--rose:#b85f56;--muted:#5d756f}*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 10% 0%,#fff8de,#dff4ef 45%,#b8ded8);color:var(--ink);min-height:100vh}.wrap{max-width:1120px;margin:auto;padding:28px 18px 40px}header{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;margin-bottom:18px}.eyebrow{letter-spacing:.16em;text-transform:uppercase;color:var(--rose);font-weight:800;font-size:.78rem}h1{font-family:Georgia,serif;font-size:clamp(2.2rem,7vw,5.2rem);line-height:.9;margin:.15em 0}.lead{max-width:720px;color:var(--muted);font-size:1.06rem}.panel{background:rgba(255,248,232,.88);border:1px solid rgba(19,54,47,.16);box-shadow:0 22px 65px rgba(28,75,68,.18);border-radius:28px;padding:20px}.stats{display:flex;gap:10px;flex-wrap:wrap}.pill{background:#fff;border:1px solid rgba(19,54,47,.12);border-radius:999px;padding:10px 13px;font-weight:800}.game{display:grid;grid-template-columns:minmax(300px,540px) 1fr;gap:18px}.boardWrap{text-align:center}.boardArea{display:grid;grid-template-columns:36px repeat(5,1fr);grid-template-rows:36px repeat(5,1fr);gap:8px;max-width:500px;margin:auto}.corner,.clue{display:grid;place-items:center;border-radius:12px;font-weight:900}.clue{background:#fff;border:1px solid rgba(19,54,47,.14)}.clue.ok{background:var(--gold);color:#fff}.cell{aspect-ratio:1;border:2px solid rgba(19,54,47,.18);border-radius:16px;background:linear-gradient(145deg,#fbfff7,#cfe7df);cursor:pointer;font-size:1.6rem;transition:.15s transform,.15s background}.cell:hover{transform:translateY(-2px)}.cell.on{background:linear-gradient(145deg,#204a3f,#0f2c27);box-shadow:inset 0 0 0 3px rgba(255,255,255,.08);color:#fff}.clues{display:grid;gap:12px}.clueCard{background:#fff;border-radius:20px;padding:14px;border:1px solid rgba(19,54,47,.12)}.clueCard.done{border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,164,65,.18)}button{border:0;border-radius:16px;padding:13px 16px;background:var(--ink);color:#fff;font-weight:900;cursor:pointer}button.secondary{background:#fff;color:var(--ink);border:1px solid rgba(19,54,47,.18)}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.dots{display:flex;gap:8px;margin:14px 0}.dot{width:12px;height:12px;border-radius:50%;background:#fff;border:1px solid rgba(19,54,47,.2)}.dot.done{background:var(--gold)}#message{font-weight:900;color:var(--rose);min-height:1.4em}@media(max-width:850px){header,.game{grid-template-columns:1fr}.boardArea{gap:6px}.cell{border-radius:12px}}
+</style>
+<style>
+:root{--ink:#293231;--sea:#eef2f0;--paper:#fbfcfa;--gold:#dfa24a;--rose:#b95f65;--muted:#71807b;--line:#d7dfdb;--surface:#fbfcfa;--surface-2:#e5ebe8;--shadow:0 22px 60px rgba(41,50,49,.1);--radius:8px;--ease:180ms ease}
+body{background:linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px),linear-gradient(180deg,rgba(255,255,255,.26) 1px,transparent 1px),var(--sea);background-size:52px 52px}
+h1{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0}
+.eyebrow{letter-spacing:0;color:var(--muted)}
+.panel,.pill,.clue,.clueCard{border-radius:var(--radius);background:rgba(251,252,250,.84);border:1px solid var(--line);box-shadow:var(--shadow)}
+.boardArea{gap:8px}
+.cell{border-radius:6px;border:1px solid var(--line);background:var(--surface);transition:transform var(--ease),background var(--ease),border-color var(--ease);color:#fff}
+.cell:hover,.cell:focus-visible{outline:2px solid rgba(138,163,155,.42);transform:translateY(-1px)}
+.cell.on{background:var(--ink);box-shadow:none}
+.clue.ok,.dot.done{background:var(--gold);color:#fff}
+.clueCard.done{border-color:var(--gold);box-shadow:0 0 0 2px rgba(223,162,74,.18)}
+button{border-radius:var(--radius);background:var(--ink);transition:transform var(--ease),background var(--ease),border-color var(--ease)}
+button:hover,button:focus-visible{outline:none;transform:translateY(-1px);background:#3b4543}
+button.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#message{color:var(--rose)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div><p class="eyebrow">Daily brain training · coastal deduction</p><h1>Shadow Cartographer</h1><p class="lead">Chart hidden island shadows. Toggle the 5×5 map until every row count, column count, and terrain note agrees with the old surveyor's clues.</p></div><div class="panel"><div class="stats"><span class="pill" id="levelPill">Map 1/5</span><span class="pill" id="timer">00:00</span></div></div></header>
-<section class="panel game"><div class="boardWrap"><h2 id="mapTitle"></h2><div class="dots" id="dots"></div><div class="boardArea" id="board"></div><p id="message"></p><div class="controls"><button id="check">Check chart</button><button class="secondary" id="hint">Hint</button><button class="secondary" id="reset">Reset map</button></div></div><aside><h2>Survey notes</h2><div class="clues" id="notes"></div><p class="lead">A gold number means that row or column currently has the correct amount of shadow. Finish all notes to sail to the next map.</p></aside></section>
+<header><div><p class="eyebrow">Entrenamiento mental diario · deducción costera</p><h1>Cartógrafo de Sombras</h1><p class="lead">Cartografía sombras ocultas de islas. Activa el mapa 5×5 hasta que cada conteo de fila, columna y nota del terreno coincida con las pistas.</p></div><div class="panel"><div class="stats"><span class="pill" id="levelPill">Mapa 1/5</span><span class="pill" id="timer">00:00</span></div></div></header>
+<section class="panel game"><div class="boardWrap"><h2 id="mapTitle"></h2><div class="dots" id="dots"></div><div class="boardArea" id="board"></div><p id="message"></p><div class="controls"><button id="check">Revisar carta</button><button class="secondary" id="hint">Pista</button><button class="secondary" id="reset">Reiniciar mapa</button></div></div><aside><h2>Notas de exploración</h2><div class="clues" id="notes"></div><p class="lead">Un número dorado indica que esa fila o columna tiene la cantidad correcta de sombra. Completa todas las notas para pasar al siguiente mapa.</p></aside></section>
 </div>
 <script>
 const puzzles=[
-{title:'Crescent Atoll',grid:['01110','11000','01010','00010','00111'],notes:['Exactly one corner is shadowed.','The center tile is water.','Row three has two separated shadows.']},
-{title:'Reef Gate',grid:['10011','11010','01000','01110','00011'],notes:['The top row has two adjacent shadows on the east.','Column two forms a chain of four shadows.','Bottom row shadows sit on the east edge.']},
-{title:'Moth Island',grid:['00100','01110','10101','00100','01110'],notes:['The middle row has alternating land and water.','Column three is almost fully shadowed.','The shape mirrors left to right.']},
-{title:'Harbor Teeth',grid:['11100','00100','10110','10010','11110'],notes:['The west edge has four shadows.','The final row is nearly full.','Only one tile is shadowed in row two.']},
-{title:'Moonwake Key',grid:['01011','01001','11101','00100','10111'],notes:['Column one has two shadows separated by water.','The middle row has four shadows.','The northeast corner is shadowed.']}
+{title:'Atolón Creciente',grid:['01110','11000','01010','00010','00111'],notes:['Exactamente una esquina tiene sombra.','La casilla central es agua.','La tercera fila tiene dos sombras separadas.']},
+{title:'Puerta del Arrecife',grid:['10011','11010','01000','01110','00011'],notes:['La fila superior tiene dos sombras adyacentes al este.','La segunda columna forma una cadena de cuatro sombras.','Las sombras de la fila inferior están en el borde este.']},
+{title:'Isla Polilla',grid:['00100','01110','10101','00100','01110'],notes:['La fila central alterna tierra y agua.','La tercera columna está casi totalmente sombreada.','La forma se refleja de izquierda a derecha.']},
+{title:'Dientes del Puerto',grid:['11100','00100','10110','10010','11110'],notes:['El borde oeste tiene cuatro sombras.','La última fila está casi llena.','Solo una casilla tiene sombra en la segunda fila.']},
+{title:'Cayo Estela Lunar',grid:['01011','01001','11101','00100','10111'],notes:['La primera columna tiene dos sombras separadas por agua.','La fila central tiene cuatro sombras.','La esquina noreste tiene sombra.']}
 ];
 let level=0,state=[],done=Array(puzzles.length).fill(false),started=Date.now();
 const board=document.querySelector('#board'),notes=document.querySelector('#notes'),msg=document.querySelector('#message');
 setInterval(()=>{const s=Math.floor((Date.now()-started)/1000);timer.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
 function target(){return puzzles[level].grid.map(r=>[...r].map(Number))}function counts(g){return{rows:g.map(r=>r.reduce((a,b)=>a+b,0)),cols:[0,1,2,3,4].map(c=>g.reduce((a,r)=>a+r[c],0))}}
 function load(){state=Array.from({length:5},()=>Array(5).fill(0));msg.textContent='';render()}
-function render(){const t=target(),tc=counts(t),sc=counts(state);mapTitle.textContent=puzzles[level].title;levelPill.textContent=`Map ${level+1}/5`;dots.innerHTML=done.map((d,i)=>`<span class="dot ${d?'done':''}" title="Map ${i+1}"></span>`).join('');board.innerHTML='<div class="corner"></div>';tc.cols.forEach((n,i)=>board.insertAdjacentHTML('beforeend',`<div class="clue ${sc.cols[i]===n?'ok':''}">${n}</div>`));state.forEach((row,r)=>{board.insertAdjacentHTML('beforeend',`<div class="clue ${sc.rows[r]===tc.rows[r]?'ok':''}">${tc.rows[r]}</div>`);row.forEach((v,c)=>{const b=document.createElement('button');b.className='cell '+(v?'on':'');b.setAttribute('aria-label',`row ${r+1} column ${c+1}`);b.textContent=v?'◆':'';b.onclick=()=>{state[r][c]=state[r][c]?0:1;render()};board.appendChild(b)})});notes.innerHTML=puzzles[level].notes.map(n=>`<div class="clueCard ${solved()? 'done':''}">${n}</div>`).join('')}
+function render(){const t=target(),tc=counts(t),sc=counts(state);mapTitle.textContent=puzzles[level].title;levelPill.textContent=`Mapa ${level+1}/5`;dots.innerHTML=done.map((d,i)=>`<span class="dot ${d?'done':''}" title="Mapa ${i+1}"></span>`).join('');board.innerHTML='<div class="corner"></div>';tc.cols.forEach((n,i)=>board.insertAdjacentHTML('beforeend',`<div class="clue ${sc.cols[i]===n?'ok':''}">${n}</div>`));state.forEach((row,r)=>{board.insertAdjacentHTML('beforeend',`<div class="clue ${sc.rows[r]===tc.rows[r]?'ok':''}">${tc.rows[r]}</div>`);row.forEach((v,c)=>{const b=document.createElement('button');b.className='cell '+(v?'on':'');b.setAttribute('aria-label',`fila ${r+1}, columna ${c+1}`);b.textContent=v?'◆':'';b.onclick=()=>{state[r][c]=state[r][c]?0:1;render()};board.appendChild(b)})});notes.innerHTML=puzzles[level].notes.map(n=>`<div class="clueCard ${solved()? 'done':''}">${n}</div>`).join('')}
 function solved(){const t=target();return state.every((r,i)=>r.every((v,j)=>v===t[i][j]))}
-function check(){if(solved()){done[level]=true;if(level===puzzles.length-1){msg.textContent='Complete chart! Every island shadow is mapped.'}else{msg.textContent='Accurate chart. Sailing to the next island...';setTimeout(()=>{level++;load()},900)}}else msg.textContent='Not yet. Compare gold counts, then revisit the survey notes.';render()}
-function giveHint(){const t=target();for(let r=0;r<5;r++)for(let c=0;c<5;c++)if(state[r][c]!==t[r][c]){state[r][c]=t[r][c];msg.textContent=`Hint placed at row ${r+1}, column ${c+1}.`;render();return}}
-check.onclick=check;hint.onclick=giveHint;reset.onclick=load;load();
+function check(){if(solved()){done[level]=true;if(level===puzzles.length-1){msg.textContent='Carta completa. Todas las sombras de la isla están trazadas.'}else{msg.textContent='Carta precisa. Navegando a la siguiente isla...';setTimeout(()=>{level++;load()},900)}}else msg.textContent='Aún no. Compara los conteos dorados y vuelve a revisar las notas.';render()}
+function givePista(){const t=target();for(let r=0;r<5;r++)for(let c=0;c<5;c++)if(state[r][c]!==t[r][c]){state[r][c]=t[r][c];msg.textContent=`Pista placed at row ${r+1}, column ${c+1}.`;render();return}}
+document.querySelector('#check').onclick=check;document.querySelector('#hint').onclick=givePista;document.querySelector('#reset').onclick=load;load();
 </script>
 </body>
 </html>

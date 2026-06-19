@@ -1,23 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NicoSavesTheWorld Brain Training</title>
-  <meta name="description" content="A daily arcade of short mental puzzle games from NicoSavesTheWorld Brain Training.">
+  <title>Entrenamiento Mental NicoSavesTheWorld</title>
+  <meta name="description" content="Un arcade diario y tranquilo de pequeños juegos mentales de NicoSavesTheWorld.">
   <style>
     :root {
       color-scheme: light;
-      --bg: #f7f4ee;
-      --panel: #fffdf8;
-      --ink: #1d2522;
-      --muted: #65716d;
-      --line: #ddd6c9;
-      --accent: #217c72;
-      --accent-strong: #155f59;
-      --warm: #eeb15e;
-      --rose: #bd6b73;
-      --shadow: 0 18px 46px rgba(53, 45, 31, 0.13);
+      --bg: #eef2f0;
+      --paper: #fbfcfa;
+      --ink: #27302f;
+      --muted: #71807b;
+      --line: #d8e0dc;
+      --accent: #cf6f78;
+      --accent-2: #8aa39b;
+      --soft: #e5ebe8;
+      --shadow: 0 18px 42px rgba(39, 48, 47, 0.08);
+      --radius: 8px;
     }
 
     * {
@@ -35,9 +35,15 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
       background:
-        linear-gradient(120deg, rgba(33, 124, 114, 0.1), transparent 34%),
-        linear-gradient(260deg, rgba(238, 177, 94, 0.16), transparent 38%),
+        linear-gradient(90deg, rgba(255,255,255,0.28) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,0.24) 1px, transparent 1px),
         var(--bg);
+      background-size: 56px 56px;
+    }
+
+    button,
+    a {
+      font: inherit;
     }
 
     a {
@@ -47,190 +53,259 @@
     .page {
       width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 40px 0 56px;
+      padding: 34px 0 52px;
     }
 
-    .hero {
+    .masthead {
       display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 28px;
       align-items: end;
-      padding: 32px 0 28px;
+      min-height: 230px;
+      padding-bottom: 24px;
       border-bottom: 1px solid var(--line);
     }
 
-    .eyebrow {
-      margin: 0 0 12px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      color: var(--accent-strong);
+    .mark {
+      display: grid;
+      grid-template-columns: repeat(3, 24px);
+      grid-auto-rows: 24px;
+      gap: 12px;
+      width: max-content;
+      margin-bottom: 28px;
+    }
+
+    .mark span {
+      display: block;
+      width: 24px;
+      height: 24px;
+      background: var(--ink);
+      transform: rotate(45deg);
+    }
+
+    .mark span:nth-child(3),
+    .mark span:nth-child(5) {
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .mark span:nth-child(7) {
+      background: var(--paper);
+      border: 1px solid var(--line);
     }
 
     h1 {
+      max-width: 760px;
       margin: 0;
-      max-width: 780px;
-      font-size: clamp(2.35rem, 6vw, 5.8rem);
-      line-height: 0.95;
+      font-size: clamp(2.1rem, 6vw, 4.9rem);
+      line-height: 0.96;
       letter-spacing: 0;
     }
 
-    .hero-copy {
-      margin: 18px 0 0;
-      max-width: 650px;
+    .subline {
+      max-width: 560px;
+      margin: 16px 0 0;
       color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.16rem);
-      line-height: 1.65;
+      font-size: 1rem;
+      line-height: 1.6;
     }
 
-    .status {
-      background: rgba(255, 253, 248, 0.76);
-      border: 1px solid var(--line);
-      border-radius: 8px;
+    .count {
+      min-width: 148px;
       padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(251, 252, 250, 0.72);
       box-shadow: var(--shadow);
     }
 
-    .status-label {
-      margin: 0 0 8px;
+    .count span {
+      display: block;
       color: var(--muted);
-      font-size: 0.86rem;
+      font-size: 0.82rem;
     }
 
-    .status-value {
-      margin: 0;
-      font-size: 1.65rem;
-      font-weight: 850;
+    .count strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 2.2rem;
+      line-height: 1;
     }
 
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
+    .bar {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 18px;
       align-items: center;
-      gap: 16px;
-      margin: 30px 0 18px;
+      margin: 24px 0 16px;
     }
 
-    .toolbar h2 {
+    .bar h2 {
       margin: 0;
-      font-size: 1rem;
-      letter-spacing: 0;
+      font-size: 0.92rem;
+      font-weight: 780;
+      color: var(--muted);
     }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
       justify-content: flex-end;
+      gap: 8px;
     }
 
     .filter {
-      border: 1px solid var(--line);
-      background: rgba(255, 253, 248, 0.72);
-      color: var(--ink);
-      min-height: 36px;
-      padding: 0 12px;
+      min-height: 34px;
+      padding: 0 11px;
+      border: 1px solid transparent;
       border-radius: 999px;
-      font: inherit;
-      font-size: 0.9rem;
+      background: transparent;
+      color: var(--muted);
       cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .filter:hover,
+    .filter:focus-visible {
+      color: var(--ink);
+      outline: none;
+      border-color: var(--line);
+      background: rgba(251, 252, 250, 0.58);
     }
 
     .filter[aria-pressed="true"] {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
+      color: var(--ink);
+      background: var(--paper);
+      border-color: var(--line);
+      box-shadow: 0 8px 20px rgba(39, 48, 47, 0.05);
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      gap: 12px;
     }
 
     .game-card {
-      display: flex;
-      min-height: 230px;
-      flex-direction: column;
-      justify-content: space-between;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      position: relative;
+      display: grid;
+      min-height: 248px;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
       padding: 18px;
-      box-shadow: 0 14px 30px rgba(53, 45, 31, 0.08);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(251, 252, 250, 0.84);
+      box-shadow: 0 14px 34px rgba(39, 48, 47, 0.07);
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      transform: rotate(45deg);
+      background: var(--soft);
+    }
+
+    .game-card:nth-child(3n + 2)::before {
+      border-radius: 50%;
+      transform: none;
+      background: #f4d9dc;
+      border-color: #e7bcc2;
+    }
+
+    .game-card:nth-child(3n)::before {
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      transform: none;
+      border: 0;
+      background: var(--accent-2);
     }
 
     .game-card.is-hidden {
       display: none;
     }
 
-    .card-top {
-      display: grid;
-      gap: 12px;
-    }
-
     .meta {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-right: 54px;
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.78rem;
+      font-weight: 720;
     }
 
-    .skill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: rgba(33, 124, 114, 0.1);
-      color: var(--accent-strong);
-      font-size: 0.82rem;
-      font-weight: 750;
+    .dot {
+      width: 4px;
+      height: 4px;
+      align-self: center;
+      border-radius: 50%;
+      background: var(--accent);
     }
 
     .game-card h3 {
+      position: relative;
       margin: 0;
-      font-size: 1.42rem;
+      max-width: 250px;
+      font-size: 1.36rem;
       line-height: 1.12;
       letter-spacing: 0;
     }
 
     .game-card p {
-      margin: 0;
+      position: relative;
+      margin: 10px 0 0;
       color: var(--muted);
-      line-height: 1.55;
+      font-size: 0.95rem;
+      line-height: 1.52;
     }
 
     .play-link {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      margin-top: 22px;
-      padding: 0 16px;
-      border-radius: 8px;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 42px;
+      width: 100%;
+      padding: 0 12px 0 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       background: var(--ink);
       color: #fff;
       text-decoration: none;
-      font-weight: 800;
+      font-size: 0.92rem;
+      font-weight: 760;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .play-link::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid currentColor;
+      border-top: 2px solid currentColor;
+      transform: rotate(45deg);
     }
 
     .play-link:hover,
     .play-link:focus-visible {
-      background: var(--accent-strong);
       outline: none;
+      background: #384240;
+      transform: translateY(-1px);
     }
 
     .empty {
       display: none;
-      padding: 28px;
+      padding: 22px;
       border: 1px dashed var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       color: var(--muted);
-      background: rgba(255, 253, 248, 0.66);
+      background: rgba(251, 252, 250, 0.64);
       line-height: 1.55;
     }
 
@@ -239,18 +314,22 @@
     }
 
     footer {
-      margin-top: 34px;
-      padding-top: 20px;
+      margin-top: 28px;
+      padding-top: 18px;
       border-top: 1px solid var(--line);
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       line-height: 1.6;
     }
 
     @media (max-width: 900px) {
-      .hero {
+      .masthead {
         grid-template-columns: 1fr;
-        align-items: start;
+        min-height: 0;
+      }
+
+      .count {
+        width: 100%;
       }
 
       .grid {
@@ -261,16 +340,27 @@
     @media (max-width: 640px) {
       .page {
         width: min(100% - 24px, 1120px);
-        padding-top: 24px;
+        padding-top: 22px;
       }
 
-      .hero {
-        padding-top: 16px;
+      .masthead {
+        padding-bottom: 20px;
       }
 
-      .toolbar {
-        align-items: flex-start;
-        flex-direction: column;
+      .mark {
+        grid-template-columns: repeat(3, 20px);
+        grid-auto-rows: 20px;
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+
+      .mark span {
+        width: 20px;
+        height: 20px;
+      }
+
+      .bar {
+        grid-template-columns: 1fr;
       }
 
       .filters {
@@ -282,98 +372,86 @@
       }
 
       .game-card {
-        min-height: 210px;
+        min-height: 218px;
       }
     }
   </style>
 </head>
 <body>
   <main class="page">
-    <section class="hero" aria-labelledby="page-title">
+    <section class="masthead" aria-labelledby="page-title">
       <div>
-        <p class="eyebrow">Daily mental warmup</p>
-        <h1 id="page-title">NicoSavesTheWorld Brain Training</h1>
-        <p class="hero-copy">
-          A growing shelf of short puzzle games designed for a focused 10 to 15 minute start to the day.
-        </p>
+        <div class="mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+        <h1 id="page-title">Entrenamiento Mental NicoSavesTheWorld</h1>
+        <p class="subline">Pequeños ejercicios diarios para enfocar la mente, reconocer patrones y empezar con calma.</p>
       </div>
-      <aside class="status" aria-label="Arcade status">
-        <p class="status-label">Published games</p>
-        <p class="status-value" id="game-count">0</p>
+      <aside class="count" aria-label="Estado del arcade">
+        <span>Publicados</span>
+        <strong id="game-count">0</strong>
       </aside>
     </section>
 
-    <section class="toolbar" aria-label="Game filters">
-      <h2>Games</h2>
+    <section class="bar" aria-label="Filtros de juegos">
+      <h2>Catálogo</h2>
       <div class="filters" id="filters"></div>
     </section>
 
-    <section class="grid" id="game-grid" aria-label="Published puzzle games"></section>
-    <p class="empty" id="empty-state">
-      No games have been published yet. The daily Codex run should add the first puzzle here after it creates and deploys a new GitHub Pages game.
-    </p>
+    <section class="grid" id="game-grid" aria-label="Juegos publicados"></section>
+    <p class="empty" id="empty-state">Todavía no hay juegos para este filtro.</p>
 
     <footer>
-      This arcade is static and GitHub Pages friendly. Codex should update the games list in this file after each daily game is published.
+      Arcade estático para GitHub Pages. Los juegos nuevos aparecen primero.
     </footer>
   </main>
 
   <script>
     const games = [
       {
-        title: "Mosaic Magistrate",
+        title: "Magistrado del Mosaico",
         date: "2026-06-19",
-        skill: "Logic Grids",
-        description: "Restore courthouse mosaics by cycling guild marks until Latin-square balance and extra magistrate laws agree.",
+        skill: "Grillas lógicas",
+        description: "Restaura mosaicos de juzgado alternando marcas de gremio hasta que cuadren el equilibrio latino y las leyes extra.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/mosaic-magistrate-2026-06-19/"
       },
       {
-        title: "Orbit Locksmith",
+        title: "Cerrajero Orbital",
         date: "2026-06-19",
-        skill: "Pattern Logic",
-        description: "Rotate three orbital rings until telescope clues align symbols, colors, and sectors into a complete lock pattern.",
+        skill: "Lógica de patrones",
+        description: "Gira tres anillos orbitales hasta que las pistas del telescopio alineen símbolos, colores y sectores.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/orbit-locksmith-2026-06-19/"
       },
       {
-        title: "Prism Courier",
+        title: "Mensajero Prisma",
         date: "2026-06-19",
-        skill: "Route Planning",
-        description: "Guide a color-carrying courier through prism gates, predicting transformations to match each delivery seal.",
+        skill: "Planificación de rutas",
+        description: "Guía a un mensajero con color por puertas prisma y predice cambios para igualar cada sello.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/prism-courier-2026-06-19/"
       },
       {
-        title: "Shadow Cartographer",
+        title: "Cartógrafo de Sombras",
         date: "2026-06-19",
-        skill: "Spatial Deduction",
-        description: "Reconstruct hidden 5x5 island shadows from row counts, column counts, and terrain survey notes.",
+        skill: "Deducción espacial",
+        description: "Reconstruye sombras ocultas en islas 5x5 usando conteos de filas, columnas y notas del terreno.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/shadow-cartographer-2026-06-19/"
       },
       {
-        title: "Lantern Ledger",
+        title: "Registro de Faroles",
         date: "2026-06-19",
-        skill: "Arithmetic Deduction",
-        description: "Balance moonlit lantern ledgers by filling a 4x4 grid from row, column, fixed-value, and district clues.",
+        skill: "Deducción aritmética",
+        description: "Equilibra registros de faroles llenando una grilla 4x4 con pistas de filas, columnas, valores fijos y distrito.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/lantern-ledger-2026-06-19/"
       },
       {
-        title: "Echo Orchard",
+        title: "Huerto de Ecos",
         date: "2026-06-19",
-        skill: "Memory Sequencing",
-        description: "Memorize fruit melodies, transform them with changing orchard rules, and replay the echo.",
+        skill: "Memoria secuencial",
+        description: "Memoriza melodías de fruta, transfórmalas con reglas cambiantes del huerto y reproduce el eco.",
         url: "https://nsanchezBG.github.io/CodexCloudBase/echo-orchard-2026-06-19/"
-      },
-      /*
-      Codex daily runs should add new entries here, newest first.
-
-      Example:
-      {
-        title: "Glyph Lock",
-        date: "2026-06-19",
-        skill: "Deduction",
-        description: "Decode symbol rules by testing compact logic patterns across a shifting grid.",
-        url: "https://OWNER.github.io/glyph-lock-2026-06-19/"
       }
-      */
     ];
 
     const grid = document.querySelector("#game-grid");
@@ -381,8 +459,8 @@
     const count = document.querySelector("#game-count");
     const empty = document.querySelector("#empty-state");
 
-    const skills = ["All", ...Array.from(new Set(games.map((game) => game.skill))).sort()];
-    let activeSkill = "All";
+    const skills = ["Todos", ...Array.from(new Set(games.map((game) => game.skill))).sort()];
+    let activeSkill = "Todos";
 
     function renderFilters() {
       filters.innerHTML = "";
@@ -403,42 +481,38 @@
 
     function renderGames() {
       grid.innerHTML = "";
-      const visibleGames = games.filter((game) => activeSkill === "All" || game.skill === activeSkill);
+      const visibleGames = games.filter((game) => activeSkill === "Todos" || game.skill === activeSkill);
 
-      count.textContent = String(games.length);
-      empty.classList.toggle("is-visible", games.length === 0 || visibleGames.length === 0);
+      count.textContent = String(games.length).padStart(2, "0");
+      empty.classList.toggle("is-visible", visibleGames.length === 0);
 
       visibleGames.forEach((game) => {
         const article = document.createElement("article");
         article.className = "game-card";
 
-        const top = document.createElement("div");
-        top.className = "card-top";
-
         const meta = document.createElement("div");
         meta.className = "meta";
-
         const date = document.createElement("span");
         date.textContent = game.date;
-
+        const dot = document.createElement("span");
+        dot.className = "dot";
         const skill = document.createElement("span");
-        skill.className = "skill";
         skill.textContent = game.skill;
 
+        const body = document.createElement("div");
         const title = document.createElement("h3");
         title.textContent = game.title;
-
         const description = document.createElement("p");
         description.textContent = game.description;
 
         const link = document.createElement("a");
         link.className = "play-link";
         link.href = game.url;
-        link.textContent = "Play";
+        link.textContent = "Jugar";
 
-        meta.append(date, skill);
-        top.append(meta, title, description);
-        article.append(top, link);
+        meta.append(date, dot, skill);
+        body.append(title, description);
+        article.append(meta, body, link);
         grid.appendChild(article);
       });
     }

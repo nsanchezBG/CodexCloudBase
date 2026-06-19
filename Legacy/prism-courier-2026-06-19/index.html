@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mensajero Prisma | Entrenamiento Mental NicoSavesTheWorld</title>
-  <meta name="description" content="Guía a un mensajero por puertas prisma prediciendo transformaciones de color y coincidiendo con sellos de entrega.">
+  <title>Prism Courier | NicoSavesTheWorld Brain Training</title>
+  <meta name="description" content="Route a courier through prism gates by predicting color transformations and matching delivery seals.">
   <style>
     :root {
       color-scheme: light;
@@ -13,11 +13,11 @@
       --ink: #182235;
       --muted: #65748b;
       --line: #d9e2ef;
-      --cian: #36a3c7;
-      --rosa: #d85778;
-      --dorado: #e1a63f;
-      --violeta: #7a61d1;
-      --verde: #4aa96c;
+      --cyan: #36a3c7;
+      --rose: #d85778;
+      --gold: #e1a63f;
+      --violet: #7a61d1;
+      --green: #4aa96c;
       --shadow: 0 24px 60px rgba(24, 34, 53, 0.14);
     }
     * { box-sizing: border-box; }
@@ -40,7 +40,7 @@
       backdrop-filter: blur(14px);
     }
     .hero { padding: clamp(22px, 4vw, 38px); margin-bottom: 18px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; }
-    .eyebrow { margin: 0 0 10px; color: var(--violeta); font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; }
+    .eyebrow { margin: 0 0 10px; color: var(--violet); font-weight: 850; text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; }
     h1 { margin: 0; font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: .92; letter-spacing: -.06em; }
     .hero p:last-child { max-width: 720px; color: var(--muted); line-height: 1.65; font-size: 1.05rem; }
     .score { min-width: 170px; padding: 18px; border-radius: 22px; background: #f7fbff; border: 1px solid var(--line); text-align: center; }
@@ -54,17 +54,17 @@
     .action.secondary { background: #e9f0f8; color: var(--ink); }
     .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; touch-action: manipulation; }
     .cell { aspect-ratio: 1; border: 2px solid #d8e3ef; border-radius: 18px; background: #fbfdff; display:grid; place-items:center; position:relative; min-width:0; transition:.15s ease; }
-    .cell.path { border-color: var(--violeta); background: rgba(122,97,209,.11); transform: translateY(-1px); }
+    .cell.path { border-color: var(--violet); background: rgba(122,97,209,.11); transform: translateY(-1px); }
     .cell.current { outline: 4px solid rgba(122,97,209,.22); }
     .cell.block { background: repeating-linear-gradient(135deg, #dce5ef, #dce5ef 8px, #cbd7e5 8px, #cbd7e5 16px); }
     .cell.start::after, .cell.end::after { position:absolute; bottom:6px; font-size:.68rem; font-weight:900; color:var(--muted); }
     .cell.start::after { content:"START"; } .cell.end::after { content:"SEAL"; }
     .dot { width: 48%; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 -8px 14px rgba(0,0,0,.14), 0 8px 18px rgba(24,34,53,.16); }
-    .cian { background: var(--cian); } .rosa { background: var(--rosa); } .dorado { background: var(--dorado); } .violeta { background: var(--violeta); } .verde { background: var(--verde); }
+    .cyan { background: var(--cyan); } .rose { background: var(--rose); } .gold { background: var(--gold); } .violet { background: var(--violet); } .green { background: var(--green); }
     .gate { width:58%; aspect-ratio:1; border-radius: 16px; display:grid; place-items:center; color:white; font-weight:950; font-size: clamp(1rem, 4vw, 1.45rem); box-shadow: 0 10px 22px rgba(24,34,53,.18); }
-    .gate.flip { background: linear-gradient(135deg, var(--cian), var(--rosa)); }
-    .gate.warm { background: linear-gradient(135deg, var(--rosa), var(--dorado)); }
-    .gate.cool { background: linear-gradient(135deg, var(--dorado), var(--cian)); }
+    .gate.flip { background: linear-gradient(135deg, var(--cyan), var(--rose)); }
+    .gate.warm { background: linear-gradient(135deg, var(--rose), var(--gold)); }
+    .gate.cool { background: linear-gradient(135deg, var(--gold), var(--cyan)); }
     .side-card { padding: 20px; display:grid; gap:16px; align-content:start; }
     h2 { margin:0; font-size:1.1rem; }
     .legend { display:grid; gap:10px; }
@@ -76,141 +76,63 @@
     .mini { width:28px; height:28px; border-radius:50%; box-shadow: inset 0 -5px 9px rgba(0,0,0,.14); }
     @media (max-width: 880px) { .hero, .layout { grid-template-columns:1fr; } .score { text-align:left; } }
     @media (max-width: 560px) { main { width:min(100% - 18px, 1120px); } .grid { gap:6px; } .cell { border-radius:12px; } .gate { border-radius:10px; } .cell.start::after,.cell.end::after{font-size:.52rem; bottom:3px;} }
-    :root {
-      --bg: #eef2f0;
-      --panel: #fbfcfa;
-      --ink: #293231;
-      --muted: #71807b;
-      --line: #d7dfdb;
-      --cian: #7db7d0;
-      --rosa: #cf6f78;
-      --dorado: #dfa24a;
-      --violeta: #6f4a49;
-      --verde: #8aa39b;
-      --shadow: 0 22px 60px rgba(41, 50, 49, 0.1);
-      --radius: 8px;
-      --ease: 180ms ease;
-    }
-
-    body {
-      background:
-        linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(255,255,255,0.26) 1px, transparent 1px),
-        var(--bg);
-      background-size: 52px 52px;
-    }
-
-    .hero,
-    .board-wrap,
-    .side-card,
-    .score,
-    .pill,
-    .rule,
-    .message {
-      border-radius: var(--radius);
-      background: rgba(251, 252, 250, 0.84);
-      border-color: var(--line);
-      box-shadow: var(--shadow);
-      backdrop-filter: none;
-    }
-
-    h1 {
-      letter-spacing: 0;
-    }
-
-    .cell {
-      border-radius: 6px;
-      border-color: var(--line);
-      background: #fbfcfa;
-      transition: transform var(--ease), border-color var(--ease), background var(--ease);
-    }
-
-    .gate {
-      border-radius: 6px;
-      box-shadow: 0 10px 22px rgba(41, 50, 49, 0.1);
-    }
-
-    .action {
-      border-radius: var(--radius);
-      background: var(--ink);
-      transition: transform var(--ease), background var(--ease), border-color var(--ease);
-    }
-
-    .action.secondary {
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--ink);
-    }
-
-    .action:hover,
-    .action:focus-visible {
-      outline: none;
-      transform: translateY(-1px);
-      background: #3b4543;
-    }
-
-    .action.secondary:hover,
-    .action.secondary:focus-visible {
-      background: var(--panel);
-      border-color: var(--verde);
-    }
   </style>
 </head>
 <body>
   <main>
     <section class="hero">
       <div>
-        <p class="eyebrow">Ruta prisma diaria</p>
-        <h1>Mensajero Prisma</h1>
-        <p>Traza una ruta desde el mensajero hasta el sello de entrega. Cada puerta prisma cambia el color que llevas, así que llega con el color exacto antes de quedarte sin movimientos.</p>
+        <p class="eyebrow">Daily prism route</p>
+        <h1>Prism Courier</h1>
+        <p>Draw a path from the courier to the delivery seal. Every prism gate changes your carried color, so plan a route that arrives with the exact seal color before your moves run out.</p>
       </div>
-      <div class="score"><span>Puzzles resueltos</span><strong id="solved">0 / 6</strong></div>
+      <div class="score"><span>Puzzles solved</span><strong id="solved">0 / 6</strong></div>
     </section>
     <section class="layout">
       <div class="board-wrap">
         <div class="toolbar">
           <div class="pill" id="levelLabel">Puzzle 1</div>
-          <div class="pill">Llevas <span class="mini" id="carryDot"></span><span id="carryName">cian</span></div>
-          <div class="pill">Movimientos <span id="movesLeft">0</span></div>
-          <div><button class="action secondary" id="undo">Deshacer</button> <button class="action" id="reset">Reiniciar</button></div>
+          <div class="pill">Carrying <span class="mini" id="carryDot"></span><span id="carryName">cyan</span></div>
+          <div class="pill">Moves <span id="movesLeft">0</span></div>
+          <div><button class="action secondary" id="undo">Undo</button> <button class="action" id="reset">Reset</button></div>
         </div>
-        <div class="grid" id="grid" aria-label="Tablero de ruta prisma"></div>
+        <div class="grid" id="grid" aria-label="Prism route board"></div>
       </div>
       <aside class="side-card">
-        <h2>Sello de entrega</h2>
+        <h2>Delivery seal</h2>
         <div class="seal-row"><span class="mini" id="targetDot"></span><strong id="targetName"></strong></div>
-        <div class="message" id="message">Elige una casilla adyacente. Las puertas transforman el color que llevas.</div>
-        <h2>Reglas prisma</h2>
+        <div class="message" id="message">Choose an adjacent tile. Gates transform the color you carry.</div>
+        <h2>Prism rules</h2>
         <div class="legend">
-          <div class="rule"><span>↔ invertir</span><span>cian ↔ rosa</span></div>
-          <div class="rule"><span>△ cálido</span><span>rosa → dorado → verde → rosa</span></div>
-          <div class="rule"><span>◌ frío</span><span>dorado → cian → violeta → dorado</span></div>
+          <div class="rule"><span>↔ flip</span><span>cyan ↔ rose</span></div>
+          <div class="rule"><span>△ warm</span><span>rose → gold → green → rose</span></div>
+          <div class="rule"><span>◌ cool</span><span>gold → cyan → violet → gold</span></div>
         </div>
-        <h2>Memoria de ruta</h2>
+        <h2>Path memory</h2>
         <div class="moves" id="trail"></div>
       </aside>
     </section>
   </main>
   <script>
-    const colors = ["cian", "rosa", "dorado", "verde", "violeta"];
-    const colorNames = { cian: "cian", rosa: "rosa", dorado: "dorado", verde: "verde", violeta: "violeta" };
+    const colors = ["cyan", "rose", "gold", "green", "violet"];
+    const colorNames = { cyan: "cyan", rose: "rose", gold: "gold", green: "green", violet: "violet" };
     const transform = {
-      flip: { cian: "rosa", rosa: "cian", dorado: "dorado", verde: "verde", violeta: "violeta" },
-      warm: { rosa: "dorado", dorado: "verde", verde: "rosa", cian: "cian", violeta: "violeta" },
-      cool: { dorado: "cian", cian: "violeta", violeta: "dorado", rosa: "rosa", verde: "verde" }
+      flip: { cyan: "rose", rose: "cyan", gold: "gold", green: "green", violet: "violet" },
+      warm: { rose: "gold", gold: "green", green: "rose", cyan: "cyan", violet: "violet" },
+      cool: { gold: "cyan", cyan: "violet", violet: "gold", rose: "rose", green: "green" }
     };
     const levels = [
-      { start:[5,0], end:[0,5], color:"cian", target:"dorado", limit:10, blocks:[[3,1],[3,2],[2,4]], gates:{"4,1":"flip","3,3":"warm","1,4":"cool"}},
-      { start:[0,0], end:[5,5], color:"rosa", target:"violeta", limit:11, blocks:[[1,2],[2,2],[4,3]], gates:{"0,2":"warm","2,4":"cool","4,4":"flip","3,1":"warm"}},
-      { start:[5,5], end:[0,0], color:"dorado", target:"verde", limit:12, blocks:[[1,1],[2,1],[3,4],[4,2]], gates:{"4,5":"cool","3,3":"flip","2,0":"warm","0,2":"warm"}},
-      { start:[2,0], end:[2,5], color:"violeta", target:"rosa", limit:9, blocks:[[1,2],[2,2],[3,2]], gates:{"0,1":"cool","0,3":"warm","2,4":"flip","4,3":"warm"}},
-      { start:[0,5], end:[5,0], color:"verde", target:"cian", limit:13, blocks:[[0,3],[1,3],[3,1],[4,4]], gates:{"1,5":"warm","2,4":"flip","3,3":"cool","5,2":"warm"}},
-      { start:[3,0], end:[0,3], color:"cian", target:"verde", limit:12, blocks:[[1,1],[1,4],[2,3],[4,2]], gates:{"4,0":"flip","5,1":"warm","3,2":"cool","2,2":"flip","0,2":"warm"}}
+      { start:[5,0], end:[0,5], color:"cyan", target:"gold", limit:10, blocks:[[3,1],[3,2],[2,4]], gates:{"4,1":"flip","3,3":"warm","1,4":"cool"}},
+      { start:[0,0], end:[5,5], color:"rose", target:"violet", limit:11, blocks:[[1,2],[2,2],[4,3]], gates:{"0,2":"warm","2,4":"cool","4,4":"flip","3,1":"warm"}},
+      { start:[5,5], end:[0,0], color:"gold", target:"green", limit:12, blocks:[[1,1],[2,1],[3,4],[4,2]], gates:{"4,5":"cool","3,3":"flip","2,0":"warm","0,2":"warm"}},
+      { start:[2,0], end:[2,5], color:"violet", target:"rose", limit:9, blocks:[[1,2],[2,2],[3,2]], gates:{"0,1":"cool","0,3":"warm","2,4":"flip","4,3":"warm"}},
+      { start:[0,5], end:[5,0], color:"green", target:"cyan", limit:13, blocks:[[0,3],[1,3],[3,1],[4,4]], gates:{"1,5":"warm","2,4":"flip","3,3":"cool","5,2":"warm"}},
+      { start:[3,0], end:[0,3], color:"cyan", target:"green", limit:12, blocks:[[1,1],[1,4],[2,3],[4,2]], gates:{"4,0":"flip","5,1":"warm","3,2":"cool","2,2":"flip","0,2":"warm"}}
     ];
     let levelIndex = 0;
     let solved = 0;
     let path = [];
-    let carry = "cian";
+    let carry = "cyan";
     const grid = document.querySelector("#grid");
     const message = document.querySelector("#message");
     const carryDot = document.querySelector("#carryDot");
@@ -218,7 +140,7 @@
     const trail = document.querySelector("#trail");
     function key(r,c){ return `${r},${c}`; }
     function currentLevel(){ return levels[levelIndex]; }
-    function resetLevel(note = "Planifica la ruta y toca casillas adyacentes.") {
+    function resetLevel(note = "Plan the path, then tap adjacent tiles.") {
       const level = currentLevel();
       path = [{ pos: level.start, color: level.color }];
       carry = level.color;
@@ -256,7 +178,7 @@
           grid.appendChild(cell);
         }
       }
-      document.querySelector("#levelLabel").textContent = `Puzzle ${levelIndex + 1} de ${levels.length}`;
+      document.querySelector("#levelLabel").textContent = `Puzzle ${levelIndex + 1} of ${levels.length}`;
       document.querySelector("#solved").textContent = `${solved} / ${levels.length}`;
       document.querySelector("#movesLeft").textContent = String(level.limit - (path.length - 1));
       carryDot.className = `mini ${carry}`;
@@ -271,8 +193,8 @@
       const last = path[path.length - 1].pos;
       const distance = Math.abs(last[0] - r) + Math.abs(last[1] - c);
       const blocked = level.blocks.some(([br,bc]) => br === r && bc === c);
-      if (distance !== 1 || blocked) return flash("Elige una casilla libre junto al mensajero.", "bad");
-      if (path.some(step => step.pos[0] === r && step.pos[1] === c)) return flash("El mensajero no puede cruzar dos veces la misma casilla.", "bad");
+      if (distance !== 1 || blocked) return flash("Choose an open tile directly next to the courier.", "bad");
+      if (path.some(step => step.pos[0] === r && step.pos[1] === c)) return flash("The courier cannot cross the same tile twice.", "bad");
       let nextColor = carry;
       const gate = level.gates[key(r,c)];
       if (gate) nextColor = transform[gate][carry];
@@ -281,23 +203,23 @@
       const movesUsed = path.length - 1;
       if (level.end[0] === r && level.end[1] === c) {
         if (carry === level.target) return completeLevel();
-        flash(`Arrived with ${carry}, but the seal needs ${level.target}. Deshacer and route through different prisms.`, "bad");
+        flash(`Arrived with ${carry}, but the seal needs ${level.target}. Undo and route through different prisms.`, "bad");
       } else if (movesUsed >= level.limit) {
-        flash("No moves remain. Reiniciar this puzzle and try a shorter prism route.", "bad");
+        flash("No moves remain. Reset this puzzle and try a shorter prism route.", "bad");
       } else {
-        flash(gate ? `El prisma ${gate} cambió tu color a ${colorNames[carry]}.` : "Buen paso. Recuerda el color del sello.");
+        flash(gate ? `The ${gate} prism changed your color to ${carry}.` : "Good step. Keep the seal color in mind.");
       }
       render();
     }
     function flash(text, tone = "") { message.className = `message ${tone}`; message.textContent = text; }
     function completeLevel() {
       solved = Math.max(solved, levelIndex + 1);
-      flash("Entrega exacta. Cargando la siguiente ruta...", "win");
+      flash("Delivered with the exact color. Loading the next route...", "win");
       render();
-      setTimeout(() => { levelIndex = (levelIndex + 1) % levels.length; resetLevel(levelIndex === 0 ? "Circuito completo. Repite para afinar tu intuición de rutas." : "Nueva ruta prisma lista."); }, 900);
+      setTimeout(() => { levelIndex = (levelIndex + 1) % levels.length; resetLevel(levelIndex === 0 ? "Full loop complete. Replay to sharpen your route intuition." : "New prism route ready."); }, 900);
     }
-    document.querySelector("#undo").addEventListener("click", () => { if (path.length > 1) { path.pop(); carry = path[path.length - 1].color; flash("Paso deshecho. Recalcula desde aquí."); render(); } });
-    document.querySelector("#reset").addEventListener("click", () => resetLevel("Puzzle reiniciado. Prueba una ruta más limpia."));
+    document.querySelector("#undo").addEventListener("click", () => { if (path.length > 1) { path.pop(); carry = path[path.length - 1].color; flash("Step undone. Recalculate from here."); render(); } });
+    document.querySelector("#reset").addEventListener("click", () => resetLevel("Puzzle reset. Try a cleaner route."));
     resetLevel();
   </script>
 </body>
