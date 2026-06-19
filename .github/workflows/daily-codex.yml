@@ -28,9 +28,7 @@ jobs:
             const today = `${part('year')}-${part('month')}-${part('day')}`;
             const title = `Daily brain training game - ${today}`;
 
-            const body = `@codex
-
-            Read instructions.md and memory.md in this repository, then execute the full Daily Mental Puzzle Game Generator workflow.
+            const task = `Read instructions.md and memory.md in this repository, then execute the full Daily Mental Puzzle Game Generator workflow.
 
             Important architecture: do not create a new GitHub repository. This repository is the single NicoSavesTheWorld Brain Training arcade. Create one new original static web puzzle game as a new slug folder inside this repository, with its playable page at <game-slug>/index.html.
 
@@ -60,9 +58,16 @@ jobs:
             - confirmation that changes were pushed to GitHub main
             - any known limitations`;
 
-            await github.rest.issues.create({
+            const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title,
-              body
+              body: task
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.data.number,
+              body: `@codex please run this task now.\n\n${task}`
             });
