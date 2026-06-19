@@ -1,0 +1,45 @@
+name: Daily Codex puzzle request
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 3:00 a.m. Peru time
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  request-codex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create daily Codex issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `Daily brain training game - ${today}`;
+
+            const body = `@codex
+
+            Read instructions.md and memory.md in this repository, then execute the full Daily Mental Puzzle Game Generator workflow.
+
+            Create one new original public web puzzle game repository, deploy it with GitHub Pages, test it if possible, then return to this base repository and update memory.md and index.html for NicoSavesTheWorld Brain Training.
+
+            Follow instructions.md as the source of truth. Do not ask for confirmation unless a permission or platform limitation blocks the run.
+
+            Final report should include:
+            - game title
+            - repository URL
+            - live GitHub Pages URL
+            - short description of the mechanic
+            - whether testing succeeded
+            - any known limitations`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["daily-codex"]
+            });
