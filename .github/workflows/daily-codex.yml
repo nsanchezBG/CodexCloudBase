@@ -13,33 +13,12 @@ jobs:
   request-codex:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout arcade repo
-        uses: actions/checkout@v4
-
       - name: Create daily Codex issue
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
-            const fs = require('fs');
-
-            const peruDateParts = new Intl.DateTimeFormat('en-CA', {
-              timeZone: 'America/Lima',
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit'
-            }).formatToParts(new Date());
-
-            const getPart = (type) => peruDateParts.find((part) => part.type === type).value;
-            const today = `${getPart('year')}-${getPart('month')}-${getPart('day')}`;
-            const memory = fs.existsSync('memory.md') ? fs.readFileSync('memory.md', 'utf8') : '';
-            const alreadyGeneratedToday = new RegExp(`^##\\s+${today}\\s+-`, 'm').test(memory);
-
-            if (alreadyGeneratedToday) {
-              core.notice(`A game is already logged in memory.md for ${today}; skipping Codex issue creation.`);
-              return;
-            }
-
+            const today = new Date().toISOString().slice(0, 10);
             const title = `Daily brain training game - ${today}`;
 
             const body = `@codex
