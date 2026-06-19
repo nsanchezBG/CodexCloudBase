@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brújula de Pulso</title>
+  <meta name="description" content="Gira brújulas vecinas hasta igualar la carta de pulso.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f0;
+      --surface: #fbfdfb;
+      --ink: #28302f;
+      --muted: #647571;
+      --line: #d9e1dd;
+      --accent: #2d8c7a;
+      --accent-2: #cf6f78;
+      --success: #2f8f5f;
+      --warn: #b35d42;
+      --r1: 6px;
+      --r2: 8px;
+      --space: 12px;
+      --motion: 180ms;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; background: var(--bg); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(40, 48, 47, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(40, 48, 47, 0.03) 1px, transparent 1px),
+        var(--bg);
+      background-size: 34px 34px;
+    }
+
+    button { font: inherit; color: inherit; }
+
+    .shell {
+      width: min(960px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+    }
+
+    h1 { margin: 0; font-size: clamp(1.55rem, 7vw, 2.5rem); line-height: 1; }
+    .objective { margin: 8px 0 0; color: var(--muted); line-height: 1.45; max-width: 42rem; }
+
+    .hud { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .chip {
+      min-width: 74px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--r1);
+      background: rgba(251, 253, 251, 0.7);
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .chip strong { display: block; color: var(--ink); font-size: 1rem; margin-top: 2px; }
+
+    .stage {
+      display: grid;
+      gap: 14px;
+      align-items: start;
+      grid-template-columns: 1fr;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--r2);
+      background: rgba(251, 253, 251, .72);
+      box-shadow: 0 18px 45px rgba(40, 48, 47, .10);
+    }
+
+    .board-wrap { display: grid; justify-items: center; gap: 12px; }
+    .board {
+      width: min(74vw, 390px);
+      aspect-ratio: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 10px;
+      border-radius: var(--r2);
+      background: #e4ebe7;
+      border: 1px solid var(--line);
+    }
+
+    .dial {
+      position: relative;
+      border: 1px solid rgba(40,48,47,.16);
+      border-radius: var(--r1);
+      background: var(--surface);
+      box-shadow: inset 0 -4px 0 rgba(40,48,47,.04);
+      cursor: pointer;
+      transition: transform var(--motion) ease, border-color var(--motion) ease, background var(--motion) ease;
+    }
+    .dial:hover, .dial:focus-visible { outline: none; transform: translateY(-2px); border-color: var(--accent); }
+    .dial:active { transform: translateY(0) scale(.98); }
+    .dial.is-matched { background: #f5faf7; border-color: rgba(47,143,95,.45); }
+
+    .needle {
+      position: absolute;
+      inset: 18%;
+      display: grid;
+      place-items: start center;
+      transition: transform var(--motion) ease;
+    }
+    .needle::before {
+      content: "";
+      width: 8px;
+      height: 43%;
+      border-radius: 99px 99px 3px 3px;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(40,48,47,.08);
+    }
+    .needle::after {
+      content: "";
+      position: absolute;
+      top: 43%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .target-panel { display: grid; gap: 10px; }
+    .target-title { margin: 0; color: var(--muted); font-size: .82rem; font-weight: 700; text-transform: uppercase; }
+    .mini-grid { display: grid; grid-template-columns: repeat(3, 44px); gap: 8px; }
+    .mini {
+      width: 44px; height: 44px; border: 1px solid var(--line); border-radius: var(--r1); background: var(--bg); position: relative;
+    }
+    .mini i { position: absolute; inset: 9px; display: grid; place-items: start center; transform: rotate(var(--rot)); }
+    .mini i::before { content: ""; width: 5px; height: 17px; border-radius: 99px; background: var(--accent-2); }
+    .mini i::after { content: ""; position: absolute; top: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+
+    .rules { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: .92rem; line-height: 1.35; }
+    .rules li::before { content: "— "; color: var(--accent); font-weight: 800; }
+    .feedback { min-height: 24px; margin: 0; font-weight: 700; color: var(--accent); }
+    .feedback.win { color: var(--success); }
+    .feedback.warn { color: var(--warn); }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .action {
+      min-height: 42px; padding: 0 14px; border: 1px solid var(--ink); border-radius: var(--r1);
+      background: var(--ink); color: white; cursor: pointer; font-weight: 750;
+      transition: transform var(--motion) ease, background var(--motion) ease;
+    }
+    .action.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+    .action:hover, .action:focus-visible { outline: none; transform: translateY(-1px); background: var(--accent); color: white; border-color: var(--accent); }
+
+    @media (min-width: 760px) {
+      .stage { grid-template-columns: minmax(360px, 1fr) 280px; padding: 18px; }
+      .target-panel { padding-top: 4px; }
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 12px; place-items: start center; }
+      .topbar { display: grid; align-items: start; }
+      .hud { justify-content: start; }
+      .board { width: min(94vw, 360px); gap: 8px; padding: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Brújula de Pulso</h1>
+        <p class="objective">Haz que las nueve agujas copien la carta; cada toque gira una cruz.</p>
+      </div>
+      <div class="hud" aria-label="Estado">
+        <div class="chip">Reto<strong id="level">1/6</strong></div>
+        <div class="chip">Toques<strong id="moves">0</strong></div>
+        <div class="chip">Par<strong id="matched">0/9</strong></div>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="Juego">
+      <div class="board-wrap">
+        <div class="board" id="board" aria-label="Tablero de brújulas"></div>
+        <p class="feedback" id="feedback">Toca una brújula para probar el pulso.</p>
+      </div>
+
+      <aside class="target-panel" aria-label="Carta objetivo">
+        <p class="target-title">Carta objetivo</p>
+        <div class="mini-grid" id="target"></div>
+        <ul class="rules">
+          <li>El centro también mueve sus cuatro vecinos.</li>
+          <li>Una aguja tiene cuatro direcciones posibles.</li>
+          <li>Resuelve cada carta con calma, no con prisa.</li>
+        </ul>
+        <div class="actions">
+          <button class="action" id="next" type="button">Siguiente</button>
+          <button class="action secondary" id="reset" type="button">Reiniciar</button>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const puzzles = [
+      [1, 2, 0, 3, 1, 2, 0, 3, 1],
+      [2, 0, 3, 1, 2, 1, 3, 0, 2],
+      [0, 3, 2, 2, 1, 0, 1, 3, 2],
+      [3, 1, 1, 0, 2, 3, 2, 0, 1],
+      [1, 0, 3, 2, 3, 2, 1, 1, 0],
+      [2, 3, 1, 1, 0, 3, 0, 2, 2]
+    ];
+
+    const board = document.querySelector("#board");
+    const target = document.querySelector("#target");
+    const levelLabel = document.querySelector("#level");
+    const movesLabel = document.querySelector("#moves");
+    const matchedLabel = document.querySelector("#matched");
+    const feedback = document.querySelector("#feedback");
+    const nextButton = document.querySelector("#next");
+    const resetButton = document.querySelector("#reset");
+
+    let level = 0;
+    let moves = 0;
+    let state = Array(9).fill(0);
+    let solved = false;
+
+    function rotation(value) { return `${value * 90}deg`; }
+
+    function affected(index) {
+      const row = Math.floor(index / 3);
+      const col = index % 3;
+      return [index, index - 3, index + 3, index - 1, index + 1].filter((cell) => {
+        if (cell < 0 || cell > 8) return false;
+        const cellRow = Math.floor(cell / 3);
+        const cellCol = cell % 3;
+        return Math.abs(cellRow - row) + Math.abs(cellCol - col) <= 1;
+      });
+    }
+
+    function renderBoard() {
+      board.innerHTML = "";
+      state.forEach((value, index) => {
+        const button = document.createElement("button");
+        button.className = "dial";
+        button.type = "button";
+        button.setAttribute("aria-label", `Brújula ${index + 1}`);
+        if (value === puzzles[level][index]) button.classList.add("is-matched");
+        const needle = document.createElement("span");
+        needle.className = "needle";
+        needle.style.transform = `rotate(${rotation(value)})`;
+        button.append(needle);
+        button.addEventListener("click", () => pulse(index));
+        board.append(button);
+      });
+    }
+
+    function renderTarget() {
+      target.innerHTML = "";
+      puzzles[level].forEach((value) => {
+        const cell = document.createElement("span");
+        cell.className = "mini";
+        const mark = document.createElement("i");
+        mark.style.setProperty("--rot", rotation(value));
+        cell.append(mark);
+        target.append(cell);
+      });
+    }
+
+    function updateHud() {
+      const matches = state.filter((value, index) => value === puzzles[level][index]).length;
+      levelLabel.textContent = `${level + 1}/${puzzles.length}`;
+      movesLabel.textContent = String(moves);
+      matchedLabel.textContent = `${matches}/9`;
+      nextButton.disabled = !solved;
+      nextButton.textContent = level === puzzles.length - 1 ? "Final" : "Siguiente";
+    }
+
+    function pulse(index) {
+      if (solved) return;
+      affected(index).forEach((cell) => { state[cell] = (state[cell] + 1) % 4; });
+      moves += 1;
+      const matches = state.filter((value, idx) => value === puzzles[level][idx]).length;
+      if (matches === 9) {
+        solved = true;
+        feedback.textContent = "Carta alineada. Respira y avanza.";
+        feedback.className = "feedback win";
+      } else if (moves > 18) {
+        feedback.textContent = "Hay ruido de pulso; reinicia si quieres limpiar la mente.";
+        feedback.className = "feedback warn";
+      } else {
+        feedback.textContent = "Observa qué cruz cambió antes del siguiente toque.";
+        feedback.className = "feedback";
+      }
+      renderBoard();
+      updateHud();
+    }
+
+    function loadLevel(nextLevel) {
+      level = nextLevel;
+      moves = 0;
+      solved = false;
+      state = Array(9).fill(0);
+      feedback.textContent = "Toca una brújula para probar el pulso.";
+      feedback.className = "feedback";
+      renderTarget();
+      renderBoard();
+      updateHud();
+    }
+
+    nextButton.addEventListener("click", () => {
+      if (!solved) return;
+      if (level === puzzles.length - 1) {
+        feedback.textContent = "Archivo completo. Todas las brújulas respiran juntas.";
+        feedback.className = "feedback win";
+        return;
+      }
+      loadLevel(level + 1);
+    });
+
+    resetButton.addEventListener("click", () => loadLevel(level));
+    loadLevel(0);
+  </script>
+</body>
+</html>

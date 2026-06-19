@@ -51,3 +51,12 @@
 - Visual style: Deep midnight observatory palette with glowing cyan, gold, and green orbital controls on glassy navy panels.
 - Brain skill trained: Pattern logic, spatial indexing, deduction, and working memory.
 - Notes to avoid repeating: Do not reuse concentric rotating rings, telescope lock clues, orbital vault theming, or exact-sector symbol/color alignment puzzles in the next games.
+
+## 2026-06-19 - Brújula de Pulso
+
+- Folder: brujula-de-pulso-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/brujula-de-pulso-2026-06-19/
+- Core mechanic: Rotate compass needles on a 3x3 board where each tap turns the chosen dial plus its orthogonal neighbors; match six target cards with limited visual feedback.
+- Visual style: Mist-gray background, white tactile compass tiles, charcoal ink, muted teal primary needles, rose target accents, compact HUD, and quiet grid texture.
+- Brain skill trained: Spatial logic, move planning, pattern matching, and working memory.
+- Notes to avoid repeating: Do not reuse 3x3 compass-orientation cross-rotation puzzles, target needle cards, or calm navigation-instrument theming in the next games.
