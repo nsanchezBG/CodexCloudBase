@@ -14,6 +14,8 @@
       --muted: #706a63;
       --line: #e4ded6;
       --accent: #ff8b00;
+      --accent-soft: rgba(255, 139, 0, 0.22);
+      --accent-line: rgba(255, 139, 0, 0.42);
       --soft: #f0ebe4;
       --shadow: 0 18px 42px rgba(28, 26, 28, 0.1);
       --radius: 8px;
@@ -83,11 +85,29 @@
       gap: 18px;
       padding: 18px;
       overflow: hidden;
-      border: 1px solid var(--line);
+      border: 1px solid var(--accent-line);
       border-radius: var(--radius);
-      background: rgba(251, 252, 250, 0.92);
-      box-shadow: 0 14px 34px rgba(28, 26, 28, 0.08);
+      background:
+        linear-gradient(145deg, rgba(255, 139, 0, 0.34), var(--accent-soft) 44%, rgba(251, 252, 250, 0.74)),
+        rgba(251, 252, 250, 0.56);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.58),
+        0 16px 38px rgba(28, 26, 28, 0.1),
+        0 10px 28px rgba(255, 139, 0, 0.12);
+      backdrop-filter: blur(16px) saturate(1.18);
       text-align: center;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent 34%),
+        linear-gradient(90deg, rgba(28, 26, 28, 0.08) 1px, transparent 1px);
+      background-size: auto, 18px 18px;
+      opacity: 0.42;
     }
 
     .game-card.is-hidden {
@@ -99,9 +119,13 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
-      color: var(--muted);
+      color: rgba(28, 26, 28, 0.76);
       font-size: 0.78rem;
       font-weight: 720;
+    }
+
+    .meta span {
+      position: relative;
     }
 
     .dot {
@@ -124,7 +148,7 @@
     .game-card p {
       position: relative;
       margin: 10px 0 0;
-      color: var(--muted);
+      color: rgba(28, 26, 28, 0.72);
       font-size: 0.95rem;
       line-height: 1.52;
     }
@@ -137,10 +161,10 @@
       min-height: 42px;
       width: 100%;
       padding: 0 12px 0 14px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(28, 26, 28, 0.14);
       border-radius: var(--radius);
-      background: var(--ink);
-      color: #fff;
+      background: var(--accent);
+      color: var(--ink);
       text-decoration: none;
       font-size: 0.92rem;
       font-weight: 760;
@@ -159,8 +183,8 @@
     .play-link:hover,
     .play-link:focus-visible {
       outline: none;
-      background: var(--accent);
-      color: var(--ink);
+      background: var(--ink);
+      color: #fff;
       transform: translateY(-1px);
     }
 
