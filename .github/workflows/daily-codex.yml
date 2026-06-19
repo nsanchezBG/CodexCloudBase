@@ -28,6 +28,8 @@ jobs:
 
             Update the root index.html arcade homepage so it links to the new game, and update memory.md so future runs avoid repeating the concept.
 
+            Commit all changes directly to the main branch. Do not create a pull request and do not call make_pr. If direct commits to main are blocked by permissions, branch protection, or the Codex environment, report that blocker clearly.
+
             Assume GitHub Pages is enabled for this base repository from branch main and folder /. Use this URL format for the new game:
             https://nsanchezBG.github.io/CodexCloudBase/<game-slug>/
 
