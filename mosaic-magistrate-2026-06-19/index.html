@@ -171,6 +171,27 @@
       border: 0;
     }
 
+    .home-emblem {
+      display: grid;
+      place-items: center;
+      width: min(100%, 430px);
+      aspect-ratio: 1;
+      margin-left: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.34);
+    }
+
+    .home-emblem .mark-large {
+      width: min(54%, 220px);
+      aspect-ratio: 1;
+      background: var(--ink);
+      transform: rotate(45deg);
+      box-shadow:
+        -42px 42px 0 var(--surface-2),
+        42px -42px 0 rgba(207, 111, 120, 0.55);
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
@@ -604,11 +625,8 @@
             <button class="btn secondary" type="button" data-go="game">Saltar</button>
           </div>
         </div>
-        <div class="preview" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
+        <div class="home-emblem" aria-hidden="true">
+          <span class="mark-large"></span>
         </div>
       </div>
     </section>
@@ -687,7 +705,7 @@
         brief: "Una escalera de cruces oculta el orden.",
         givens: { 2: 1, 5: 2, 8: 3, 15: 2 },
         solution: [2,3,1,0,0,2,3,1,3,1,0,2,1,0,2,3],
-        laws: ["Filas y columnas contienen las cuatro marcas.", "Cruzes sit at row 1 column 2 and row 3 column 1.", "La fila inferior dice luna, diamante, cima, cruz."]
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Las cruces están en fila 1 columna 2 y fila 3 columna 1.", "La fila inferior dice luna, diamante, cima, cruz."]
       },
       {
         name: "Anexo de Cobre",
@@ -701,7 +719,7 @@
         brief: "Pocas piedras revelan una rotación.",
         givens: { 0: 2, 7: 2, 10: 2, 13: 2 },
         solution: [2,0,3,1,1,3,0,2,3,1,2,0,0,2,1,3],
-        laws: ["Filas y columnas contienen las cuatro marcas.", "Cima marks descend in a loose step.", "La fila superior empieza con cima y luego diamante."]
+        laws: ["Filas y columnas contienen las cuatro marcas.", "Las cimas descienden en un escalón suelto.", "La fila superior empieza con cima y luego diamante."]
       }
     ];
 
@@ -723,7 +741,7 @@
     function start() {
       const puzzle = puzzles[level];
       grid = puzzle.solution.map((_, index) => puzzle.givens[index] ?? null);
-      ids.level.textContent = `${String(level + 1).padIniciar(2, "0")}/${String(puzzles.length).padIniciar(2, "0")}`;
+      ids.level.textContent = `${String(level + 1).padStart(2, "0")}/${String(puzzles.length).padStart(2, "0")}`;
       ids.name.textContent = puzzle.name;
       ids.brief.textContent = puzzle.brief;
       ids.laws.innerHTML = puzzle.laws.map((law) => `<li>${law}</li>`).join("");
@@ -787,7 +805,7 @@
       if (ok) {
         solved = Math.max(solved, level + 1);
         message.className = "message win";
-        message.textContent = level === puzzles.length - 1 ? "Todos los mosaicos fueron restaurados." : "Resueltos. Move to the next mosaic.";
+        message.textContent = level === puzzles.length - 1 ? "Todos los mosaicos fueron restaurados." : "Resuelto. Pasa al siguiente mosaico.";
       } else {
         mistakes += 1;
         message.className = "message";
@@ -810,7 +828,7 @@
 
       grid[index] = puzzle.solution[index];
       message.className = "message";
-      message.textContent = `Pista placed at row ${Math.floor(index / 4) + 1}, column ${(index % 4) + 1}.`;
+      message.textContent = `Pista colocada en fila ${Math.floor(index / 4) + 1}, columna ${(index % 4) + 1}.`;
       draw();
     }
 
