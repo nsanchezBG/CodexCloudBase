@@ -38,8 +38,12 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
 10. Update the root `index.html` arcade homepage by adding the new game, newest first.
 11. Update `memory.md` with the new game entry.
 12. Test the game locally in the cloud environment as much as available.
-13. Commit all changes directly to the `main` branch of this repository with a clear message.
-14. Report the expected live GitHub Pages URL for the new game.
+13. Commit all changes with a clear message.
+14. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
+15. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
+16. Report the live GitHub Pages URL for the new game.
+
+A local commit is not complete. The run is only complete after the changes are pushed to GitHub `main`.
 
 ## URL Rules
 
@@ -191,16 +195,20 @@ Each day, add the new game as a visible entry with:
 
 Keep the arcade page lightweight, responsive, static, and compatible with GitHub Pages.
 
-## Commit Guidance
+## Publish Guidance
 
 Use one clear commit in `CodexCloudBase`, such as:
 
 - `Add <game title> brain training game`
 - `Log <game title> and update arcade`
 
-Commit directly to `main`. Do not create a pull request and do not call `make_pr`.
+After committing, push directly to `main`:
 
-If direct commits to `main` are blocked by repository permissions, branch protection, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request.
+`git push origin HEAD:main`
+
+Do not create a pull request and do not call `make_pr`.
+
+If direct pushes to `main` are blocked by repository permissions, branch protection, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request or stopping after a local commit.
 
 ## Final Report
 
@@ -211,4 +219,5 @@ At the end of the run, report:
 - live GitHub Pages URL
 - short description of the mechanic
 - whether testing succeeded
+- confirmation that changes were pushed to GitHub `main`
 - any known limitations
