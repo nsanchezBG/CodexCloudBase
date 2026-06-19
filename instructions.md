@@ -40,10 +40,17 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
 12. Test the game locally in the cloud environment as much as available.
 13. Commit all changes with a clear message.
 14. Ensure the Git remote exists with `git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`.
-15. If `GH_PUSH_TOKEN` is available, configure the remote for this push with `git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"`. Do not print the token or run commands that display the remote URL after this step.
-16. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
-17. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
-18. Report the live GitHub Pages URL for the new game.
+15. Do not expect `GH_PUSH_TOKEN` to be visible during the agent phase. It is a Codex environment secret used by the environment setup script before the task starts. The setup script should already have configured Git credentials for `origin`.
+16. Before pushing, clear any GitHub injected credential header so Git uses the configured `origin` credentials:
+
+    ```bash
+    git config --global --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+    git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+    ```
+
+17. Push the committed work directly to GitHub `main` with `git push origin HEAD:main`.
+18. Verify that the new folder, root `index.html`, and `memory.md` changes are visible on GitHub `main`.
+19. Report the live GitHub Pages URL for the new game.
 
 A local commit is not complete. The run is only complete after the changes are pushed to GitHub `main`.
 
@@ -208,11 +215,16 @@ After committing, ensure `origin` exists:
 
 `git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git`
 
-If `GH_PUSH_TOKEN` is available in the environment, configure authenticated push without printing the token:
+Important: do not look for `GH_PUSH_TOKEN` during the agent phase. Codex environment secrets are consumed by the setup script before the task starts and may not be present as environment variables during the task. The setup script should have already configured Git credentials for `origin`.
 
-`git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"`
+Before pushing, clear any injected GitHub credential header so Git uses the configured `origin` credentials:
 
-Do not run `git remote -v` or otherwise print the authenticated URL after setting it.
+```bash
+git config --global --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
+```
+
+Do not run `git remote -v` or otherwise print authenticated remote URLs.
 
 Then push directly to `main`:
 
@@ -220,7 +232,7 @@ Then push directly to `main`:
 
 Do not create a pull request and do not call `make_pr`.
 
-If direct pushes to `main` are blocked by repository permissions, missing credentials, missing remote configuration, branch protection, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request or stopping after a local commit.
+If direct pushes to `main` are blocked by repository permissions, missing credentials, missing remote configuration, branch protection, rulesets, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request or stopping after a local commit.
 
 ## Final Report
 
