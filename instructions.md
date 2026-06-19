@@ -38,7 +38,7 @@ GitHub Pages should be enabled once for this repository from branch `main`, fold
 10. Update the root `index.html` arcade homepage by adding the new game, newest first.
 11. Update `memory.md` with the new game entry.
 12. Test the game locally in the cloud environment as much as available.
-13. Commit all changes in this repository with a clear message.
+13. Commit all changes directly to the `main` branch of this repository with a clear message.
 14. Report the expected live GitHub Pages URL for the new game.
 
 ## URL Rules
@@ -198,7 +198,9 @@ Use one clear commit in `CodexCloudBase`, such as:
 - `Add <game title> brain training game`
 - `Log <game title> and update arcade`
 
-Do not create a pull request unless the environment or repository policy requires it. If a pull request is created, include the game URL and testing notes in the PR description.
+Commit directly to `main`. Do not create a pull request and do not call `make_pr`.
+
+If direct commits to `main` are blocked by repository permissions, branch protection, or the Codex environment, report the blocker clearly in the final response instead of silently creating a pull request.
 
 ## Final Report
 
