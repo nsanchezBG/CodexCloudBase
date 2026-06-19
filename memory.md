@@ -1,3 +1,12 @@
+## 2026-06-19 - Archivo de Silencios
+
+- Folder: archivo-de-silencios-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/archivo-de-silencios-2026-06-19/
+- Core mechanic: Place four types of seals on a 5x5 archive grid so edge viewers see the required first non-empty symbol from each row or column, while exact symbol counts must also match.
+- Visual style: Mist-gray archival surface with white tiles, muted teal viewer clues, charcoal ink, and restrained rose warning feedback.
+- Brain skill trained: Visual deduction, line-of-sight reasoning, constraint balancing, and attention.
+- Notes to avoid repeating: Do not reuse first-visible edge viewer symbol placement, silent archive theming, or exact seal-count line-of-sight grids in the next games.
+
 ## 2026-06-19 - Mosaic Magistrate
 
 - Folder: mosaic-magistrate-2026-06-19/

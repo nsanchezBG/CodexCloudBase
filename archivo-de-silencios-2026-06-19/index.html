@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Archivo de Silencios</title>
+  <meta name="description" content="Un puzzle mental breve: coloca sellos en una grilla para que cada visor lateral encuentre el primer símbolo correcto.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f0;
+      --surface: #ffffff;
+      --ink: #28302f;
+      --muted: #667874;
+      --line: #d9e1dd;
+      --primary: #4c8f83;
+      --secondary: #cf6f78;
+      --success: #3f8b5f;
+      --warning: #b65f4a;
+      --r-sm: 6px;
+      --r-md: 8px;
+      --space: 12px;
+      --motion: 170ms ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(40,48,47,.045) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(40,48,47,.04) 1px, transparent 1px),
+        var(--bg);
+      background-size: 34px 34px;
+    }
+
+    button { font: inherit; color: inherit; }
+
+    .app {
+      width: min(980px, calc(100% - 24px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: 24px 0;
+    }
+
+    header {
+      display: grid;
+      gap: 8px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 7vw, 3rem);
+      line-height: .95;
+      font-weight: 760;
+    }
+
+    .objective {
+      margin: 0 auto;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: .98rem;
+      line-height: 1.45;
+    }
+
+    .shell {
+      display: grid;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 20px 42px rgba(40,48,47,.10);
+    }
+
+    .board-panel { padding: 14px; }
+
+    .hud {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      min-width: 78px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .chip strong { color: var(--ink); }
+
+    .stage {
+      display: grid;
+      grid-template-columns: 32px repeat(5, minmax(42px, 68px)) 32px;
+      grid-template-rows: 32px repeat(5, minmax(42px, 68px)) 32px;
+      justify-content: center;
+      gap: 6px;
+      touch-action: manipulation;
+    }
+
+    .clue, .corner {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 760;
+    }
+
+    .clue {
+      border: 1px solid rgba(76,143,131,.22);
+      background: rgba(76,143,131,.08);
+    }
+
+    .clue.ok {
+      border-color: rgba(63,139,95,.42);
+      color: var(--success);
+      background: rgba(63,139,95,.12);
+    }
+
+    .cell {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: rgba(255,255,255,.86);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+      font-size: clamp(1.1rem, 8vw, 1.65rem);
+      cursor: pointer;
+      transition: transform var(--motion), border-color var(--motion), background var(--motion), box-shadow var(--motion);
+    }
+
+    .cell:hover, .cell:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 18px rgba(76,143,131,.16);
+    }
+
+    .cell.filled { background: #f8fbf9; color: var(--ink); }
+    .cell.bad { border-color: rgba(182,95,74,.72); background: rgba(182,95,74,.10); }
+    .cell.locked { border-color: rgba(63,139,95,.62); background: rgba(63,139,95,.12); }
+
+    .side {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .rules {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.35;
+    }
+
+    .rules li { padding-left: 18px; position: relative; }
+    .rules li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid rgba(40,48,47,.14);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-size: .92rem;
+      font-weight: 720;
+      cursor: pointer;
+      transition: transform var(--motion), background var(--motion), color var(--motion);
+    }
+
+    .btn.primary { background: var(--ink); color: white; }
+    .btn:hover, .btn:focus-visible { outline: none; transform: translateY(-1px); background: var(--primary); color: white; }
+
+    .feedback {
+      min-height: 22px;
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .feedback.win { color: var(--success); font-weight: 720; }
+    .feedback.warn { color: var(--warning); font-weight: 720; }
+
+    @media (min-width: 820px) {
+      .shell { grid-template-columns: 1fr 280px; }
+      header { text-align: left; }
+      .objective { margin-left: 0; }
+    }
+
+    @media (max-width: 430px) {
+      .app { width: min(100% - 14px, 980px); padding-top: 14px; }
+      .board-panel, .side { padding: 10px; }
+      .stage { grid-template-columns: 26px repeat(5, minmax(38px, 1fr)) 26px; grid-template-rows: 26px repeat(5, minmax(38px, 1fr)) 26px; gap: 4px; }
+      .clue { font-size: .86rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>Archivo de Silencios</h1>
+      <p class="objective">Coloca los sellos para que cada visor de borde vea primero el símbolo indicado.</p>
+    </header>
+
+    <section class="shell" aria-label="Juego">
+      <div class="panel board-panel">
+        <div class="hud" id="hud" aria-label="Sellos restantes"></div>
+        <div class="stage" id="stage" aria-label="Tablero de archivo"></div>
+      </div>
+
+      <aside class="panel side">
+        <ul class="rules">
+          <li>Toca una casilla para cambiar su sello.</li>
+          <li>Cada tipo aparece la cantidad exacta.</li>
+          <li>Un visor ignora espacios vacíos.</li>
+        </ul>
+        <div class="controls">
+          <button class="btn primary" id="check">Revisar</button>
+          <button class="btn" id="clear">Limpiar</button>
+        </div>
+        <p class="feedback" id="feedback">Empieza por los visores enfrentados.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const symbols = ["", "◆", "●", "▲", "■"];
+    const names = { "◆": "rombos", "●": "círculos", "▲": "triángulos", "■": "cuadros" };
+    const solution = [
+      ["", "◆", "", "▲", ""],
+      ["●", "", "■", "", "◆"],
+      ["", "▲", "", "●", ""],
+      ["■", "", "◆", "", "▲"],
+      ["", "●", "", "■", ""]
+    ];
+    const size = 5;
+    let board = Array.from({ length: size }, () => Array(size).fill(""));
+    let solved = false;
+
+    const stage = document.querySelector("#stage");
+    const hud = document.querySelector("#hud");
+    const feedback = document.querySelector("#feedback");
+
+    function firstSeen(line) {
+      return line.find(Boolean) || "·";
+    }
+
+    const clues = {
+      top: Array.from({ length: size }, (_, c) => firstSeen(solution.map(row => row[c]))),
+      bottom: Array.from({ length: size }, (_, c) => firstSeen(solution.map(row => row[c]).reverse())),
+      left: solution.map(row => firstSeen(row)),
+      right: solution.map(row => firstSeen([...row].reverse()))
+    };
+
+    const required = symbols.slice(1).reduce((acc, sym) => {
+      acc[sym] = solution.flat().filter(value => value === sym).length;
+      return acc;
+    }, {});
+
+    function currentCounts() {
+      return symbols.slice(1).reduce((acc, sym) => {
+        acc[sym] = board.flat().filter(value => value === sym).length;
+        return acc;
+      }, {});
+    }
+
+    function lineFromBoard(side, index) {
+      if (side === "top") return board.map(row => row[index]);
+      if (side === "bottom") return board.map(row => row[index]).reverse();
+      if (side === "left") return board[index];
+      return [...board[index]].reverse();
+    }
+
+    function clueOk(side, index) {
+      return firstSeen(lineFromBoard(side, index)) === clues[side][index];
+    }
+
+    function isExact() {
+      return board.every((row, r) => row.every((value, c) => value === solution[r][c]));
+    }
+
+    function makeClue(side, index) {
+      const clue = document.createElement("div");
+      clue.className = "clue" + (clueOk(side, index) ? " ok" : "");
+      clue.textContent = clues[side][index];
+      clue.setAttribute("aria-label", `Visor ${side} ${index + 1}: ${clues[side][index]}`);
+      return clue;
+    }
+
+    function renderHud() {
+      const counts = currentCounts();
+      hud.innerHTML = symbols.slice(1).map(sym => {
+        const left = required[sym] - counts[sym];
+        return `<span class="chip"><strong>${sym}</strong> ${left} ${names[sym]}</span>`;
+      }).join("");
+    }
+
+    function render() {
+      renderHud();
+      stage.innerHTML = "";
+      for (let r = 0; r < size + 2; r++) {
+        for (let c = 0; c < size + 2; c++) {
+          if ((r === 0 || r === size + 1) && (c === 0 || c === size + 1)) {
+            const corner = document.createElement("div");
+            corner.className = "corner";
+            stage.append(corner);
+          } else if (r === 0) {
+            stage.append(makeClue("top", c - 1));
+          } else if (r === size + 1) {
+            stage.append(makeClue("bottom", c - 1));
+          } else if (c === 0) {
+            stage.append(makeClue("left", r - 1));
+          } else if (c === size + 1) {
+            stage.append(makeClue("right", r - 1));
+          } else {
+            const cell = document.createElement("button");
+            const value = board[r - 1][c - 1];
+            cell.className = "cell" + (value ? " filled" : "") + (solved ? " locked" : "");
+            cell.type = "button";
+            cell.textContent = value;
+            cell.setAttribute("aria-label", `Fila ${r}, columna ${c}, ${value || "vacía"}`);
+            cell.addEventListener("click", () => cycleCell(r - 1, c - 1));
+            stage.append(cell);
+          }
+        }
+      }
+    }
+
+    function cycleCell(r, c) {
+      if (solved) return;
+      const next = (symbols.indexOf(board[r][c]) + 1) % symbols.length;
+      board[r][c] = symbols[next];
+      feedback.className = "feedback";
+      feedback.textContent = "Los visores verdes ya coinciden.";
+      render();
+    }
+
+    function review() {
+      const counts = currentCounts();
+      const countProblem = symbols.slice(1).some(sym => counts[sym] !== required[sym]);
+      if (isExact()) {
+        solved = true;
+        feedback.className = "feedback win";
+        feedback.textContent = "Archivo restaurado con calma.";
+      } else if (countProblem) {
+        feedback.className = "feedback warn";
+        feedback.textContent = "Ajusta las cantidades de sellos.";
+      } else {
+        feedback.className = "feedback warn";
+        feedback.textContent = "Hay sellos que bloquean algún visor.";
+      }
+      render();
+      if (!solved) markErrors();
+    }
+
+    function markErrors() {
+      [...document.querySelectorAll(".cell")].forEach((cell, i) => {
+        const r = Math.floor(i / size);
+        const c = i % size;
+        cell.classList.toggle("bad", board[r][c] !== solution[r][c]);
+      });
+    }
+
+    document.querySelector("#check").addEventListener("click", review);
+    document.querySelector("#clear").addEventListener("click", () => {
+      solved = false;
+      board = Array.from({ length: size }, () => Array(size).fill(""));
+      feedback.className = "feedback";
+      feedback.textContent = "Tablero limpio.";
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
