@@ -34,8 +34,8 @@ jobs:
 
             Update the root index.html arcade homepage so it links to the new game, and update memory.md so future runs avoid repeating the concept.
 
-            Commit the changes. Before pushing, ensure the Git remote exists with:
-            git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git
+            Commit the changes. Before pushing, ensure the Git remote exists without printing its URL:
+            git remote | grep -qx origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git
 
             Do not look for GH_PUSH_TOKEN during the agent phase. It is a Codex environment secret used by the environment setup script before this task starts, so it may not be visible now. The setup script should already have configured Git credentials for origin.
 
@@ -43,7 +43,7 @@ jobs:
             git config --global --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
             git config --local --unset-all http.https://github.com/.extraheader >/dev/null 2>&1 || true
 
-            Do not run git remote -v or otherwise print authenticated remote URLs.
+            Do not run git remote -v, git remote get-url origin, or otherwise print authenticated remote URLs.
 
             Then push directly to GitHub main with:
             git push origin HEAD:main
