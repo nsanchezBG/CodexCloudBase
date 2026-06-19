@@ -37,6 +37,11 @@ jobs:
             Commit the changes. Before pushing, ensure the Git remote exists with:
             git remote get-url origin || git remote add origin https://github.com/nsanchezBG/CodexCloudBase.git
 
+            If GH_PUSH_TOKEN is available in the environment, configure authenticated push without printing the token:
+            git remote set-url origin "https://x-access-token:\${GH_PUSH_TOKEN}@github.com/nsanchezBG/CodexCloudBase.git"
+
+            Do not run git remote -v or otherwise print the authenticated URL after setting it.
+
             Then push directly to GitHub main with:
             git push origin HEAD:main
 
