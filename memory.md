@@ -1,3 +1,12 @@
+## 2026-06-19 - Lantern Ledger
+
+- Folder: lantern-ledger-2026-06-19/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/lantern-ledger-2026-06-19/
+- Core mechanic: Fill a 4x4 lantern grid with values 1-5 so row totals, column totals, fixed givens, and one extra district clue all balance.
+- Visual style: Moonlit market palette with warm parchment panels, gold lantern tiles, dark total badges, and calm teal feedback.
+- Brain skill trained: Arithmetic deduction, constraint solving, attention, and working memory.
+- Notes to avoid repeating: Do not reuse 4x4 row-column arithmetic ledgers, lantern market theming, or tap-to-cycle values from fixed totals in the next games.
+
 ## 2026-06-19 - Echo Orchard
 
 - Folder: echo-orchard-2026-06-19/
