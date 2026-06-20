@@ -1,3 +1,12 @@
+## 2026-06-20 - Espejo de Mareas
+
+- Folder: espejo-de-mareas-2026-06-20/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/espejo-de-mareas-2026-06-20/
+- Core mechanic: Toggle diagonal mirrors in a 4x4 tide board so three incoming beams reflect simultaneously into their assigned exit rows across four compact levels.
+- Visual style: Mist-gray tactile board with white mirror tiles, muted teal targets, rose beam paths, charcoal ink, and quiet grid texture.
+- Brain skill trained: Reflection logic, spatial prediction, route tracing, and attention.
+- Notes to avoid repeating: Do not reuse diagonal mirror beam-routing, three simultaneous side-entry beams, tide mirror theming, or exact exit-row reflection puzzles in the next games.
+
 ## 2026-06-19 - Archivo de Silencios
 
 - Folder: archivo-de-silencios-2026-06-19/

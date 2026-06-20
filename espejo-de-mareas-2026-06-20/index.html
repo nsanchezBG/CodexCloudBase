@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espejo de Mareas</title>
+  <meta name="description" content="Gira espejos de marea para guiar tres rayos hacia sus salidas exactas.">
+  <style>
+    :root{
+      color-scheme:light;
+      --bg:#eef2f0;--surface:#ffffff;--ink:#28302f;--muted:#6f817d;--line:#d9e1dd;
+      --primary:#3f8f88;--secondary:#cf6f78;--success:#4f9d69;--warn:#b35d50;
+      --r1:8px;--r2:14px;--s1:8px;--s2:12px;--s3:18px;--s4:26px;--motion:180ms;
+    }
+    *{box-sizing:border-box}html{min-height:100%;background:var(--bg)}
+    body{margin:0;min-height:100vh;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(90deg,rgba(40,48,47,.035) 1px,transparent 1px),linear-gradient(180deg,rgba(40,48,47,.03) 1px,transparent 1px),var(--bg);background-size:42px 42px;display:grid;place-items:center;padding:18px}
+    button{font:inherit;color:inherit}.shell{width:min(940px,100%);display:grid;gap:var(--s3)}
+    header{display:flex;justify-content:space-between;gap:var(--s3);align-items:end}.eyebrow{margin:0 0 5px;color:var(--primary);font-size:.76rem;font-weight:800;text-transform:uppercase}.title{margin:0;font-size:clamp(1.8rem,7vw,3.4rem);line-height:.95}.objective{margin:8px 0 0;color:var(--muted);max-width:52ch;line-height:1.45}.hud{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.pill{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);padding:8px 11px;color:var(--muted);font-size:.84rem}.pill strong{color:var(--ink)}
+    .play{display:grid;grid-template-columns:1fr;gap:var(--s3);align-items:start}.panel{background:rgba(255,255,255,.68);border:1px solid var(--line);border-radius:var(--r2);box-shadow:0 18px 48px rgba(40,48,47,.09);backdrop-filter:blur(14px);padding:var(--s3)}
+    .board-wrap{display:grid;place-items:center}.board{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(78vw,430px);aspect-ratio:1;padding:26px;border-radius:var(--r2);background:linear-gradient(145deg,#f8fbfa,#e4ece8);border:1px solid var(--line)}
+    .tile{position:relative;border:1px solid #cad7d2;border-radius:var(--r1);background:var(--surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 18px rgba(40,48,47,.08);cursor:pointer;transition:transform var(--motion),border-color var(--motion),background var(--motion)}
+    .tile:hover,.tile:focus-visible{outline:none;transform:translateY(-2px);border-color:var(--primary)}.tile.locked{cursor:default;background:#f4f7f5}.tile.locked:hover{transform:none}.mirror{position:absolute;inset:18%;border-top:5px solid var(--ink);transform:rotate(45deg);border-radius:99px;transition:transform var(--motion),border-color var(--motion)}.tile[data-mirror="b"] .mirror{transform:rotate(-45deg)}.tile.locked .mirror{border-color:var(--primary)}
+    .beam{position:absolute;z-index:4;background:var(--secondary);border-radius:999px;box-shadow:0 0 0 2px rgba(207,111,120,.12)}.beam.h{height:5px;transform:translateY(-2.5px)}.beam.v{width:5px;transform:translateX(-2.5px)}.port{position:absolute;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:.72rem;font-weight:800;background:var(--surface);border:1px solid var(--line);color:var(--muted)}.port.in{left:2px}.port.out{right:2px}.port.hit{background:var(--success);border-color:var(--success);color:#fff}.port.bad{background:var(--warn);border-color:var(--warn);color:#fff}.port.target{box-shadow:0 0 0 3px rgba(63,143,136,.16)}
+    .side{display:grid;gap:var(--s2)}.mini-title{margin:0;font-size:1rem}.rules{display:grid;gap:8px;margin:0;padding:0;list-style:none}.rules li{display:flex;gap:8px;color:var(--muted);line-height:1.35}.rules li::before{content:"";width:7px;height:7px;margin-top:.45em;border-radius:50%;background:var(--primary);flex:0 0 auto}.feedback{min-height:44px;margin:0;padding:12px;border-radius:var(--r1);background:#f6f8f7;border:1px solid var(--line);color:var(--muted);line-height:1.35}.feedback.win{border-color:rgba(79,157,105,.5);color:var(--success)}.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{border:1px solid var(--ink);border-radius:var(--r1);min-height:42px;background:var(--ink);color:#fff;font-weight:750;cursor:pointer;transition:transform var(--motion),background var(--motion)}.btn.secondary{background:transparent;color:var(--ink);border-color:var(--line)}.btn:hover,.btn:focus-visible{outline:none;transform:translateY(-1px);background:var(--primary);border-color:var(--primary);color:#fff}
+    @media(min-width:790px){.play{grid-template-columns:1.25fr .75fr}.side{position:sticky;top:18px}}@media(max-width:620px){body{padding:12px}header{display:grid}.hud{justify-content:start}.panel{padding:12px}.board{width:min(92vw,390px);padding:22px;gap:6px}.mirror{border-top-width:4px}.controls{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><p class="eyebrow">Lógica de reflejos</p><h1 class="title">Espejo de Mareas</h1><p class="objective">Gira los espejos libres hasta que cada marea salga por su marca.</p></div>
+      <div class="hud"><span class="pill">Nivel <strong id="levelLabel">1/4</strong></span><span class="pill">Giros <strong id="turns">0</strong></span></div>
+    </header>
+    <section class="play">
+      <div class="panel board-wrap"><div class="board" id="board" aria-label="Tablero de espejos 4 por 4"></div></div>
+      <aside class="panel side">
+        <h2 class="mini-title">Reglas breves</h2>
+        <ul class="rules"><li>Toca un espejo para cambiar su diagonal.</li><li>Los sellos verdes son salidas correctas.</li><li>Tres mareas deben acertar a la vez.</li></ul>
+        <p class="feedback" id="feedback">Observa las tres líneas y corrige un desvío.</p>
+        <div class="controls"><button class="btn" id="next">Comprobar</button><button class="btn secondary" id="reset">Reiniciar</button></div>
+      </aside>
+    </section>
+  </main>
+  <script>
+    const levels=[
+      {fixed:{"0,0":"b","2,2":"a"},start:["b","b","a","a","a","a","b","a","a","b","a","b","a","b","a","b"],target:[1,0,3]},
+      {fixed:{"0,2":"a","2,0":"b"},start:["b","a","a","b","b","a","a","b","b","b","a","a","a","a","a","a"],target:[1,0,2]},
+      {fixed:{"1,1":"a","2,3":"a","3,0":"b"},start:["b","a","b","a","a","a","a","b","b","a","a","a","b","b","a","a"],target:[1,0,2]},
+      {fixed:{"0,1":"b","1,2":"a","3,3":"b"},start:["b","b","a","b","b","a","a","b","b","a","b","a","a","b","b","b"],target:[1,0,2]}
+    ];
+    const rows=[0,1,3];let level=0,mirrors=[],turns=0;const board=document.querySelector('#board'),feedback=document.querySelector('#feedback'),levelLabel=document.querySelector('#levelLabel'),turnsEl=document.querySelector('#turns');
+    function idx(r,c){return r*4+c}function fixedAt(r,c){return levels[level].fixed[`${r},${c}`]}
+    function init(){mirrors=[...levels[level].start];turns=0;draw()}function draw(){levelLabel.textContent=`${level+1}/${levels.length}`;turnsEl.textContent=turns;board.innerHTML='';for(let r=0;r<4;r++){for(let c=0;c<4;c++){const b=document.createElement('button');b.className='tile';b.dataset.mirror=mirrors[idx(r,c)];b.setAttribute('aria-label',`Espejo fila ${r+1}, columna ${c+1}`);if(fixedAt(r,c)){b.classList.add('locked');b.disabled=true}b.innerHTML='<span class="mirror"></span>';b.addEventListener('click',()=>{mirrors[idx(r,c)]=mirrors[idx(r,c)]==='a'?'b':'a';turns++;draw()});board.append(b)}}drawPorts();drawBeams();check(false)}
+    function reflect(dir,m){const mapA={R:'U',L:'D',U:'R',D:'L'},mapB={R:'D',L:'U',U:'L',D:'R'};return (m==='a'?mapA:mapB)[dir]}function trace(row){let r=row,c=0,dir='R',pts=[{r:row,c:-.5}],safe=0;while(safe++<30){if(r<0||r>3||c<0||c>3)break;dir=reflect(dir,mirrors[idx(r,c)]);if(dir==='R')c++;if(dir==='L')c--;if(dir==='D')r++;if(dir==='U')r--;pts.push({r,c})}return {exit:r,pts}}
+    function cellCenter(p){const rect=board.clientWidth,inner=rect-52,gap=8,cell=(inner-3*gap)/4;return {x:26+p.c*(cell+gap)+cell/2,y:26+p.r*(cell+gap)+cell/2,cell,gap}}
+    function drawBeams(){rows.forEach((row,i)=>{const path=trace(row).pts;for(let j=0;j<path.length-1;j++){const a=cellCenter(path[j]),b=cellCenter(path[j+1]);const seg=document.createElement('i');seg.className='beam '+(Math.abs(a.x-b.x)>Math.abs(a.y-b.y)?'h':'v');seg.style.left=Math.min(a.x,b.x)+'px';seg.style.top=Math.min(a.y,b.y)+'px';seg.style.width=Math.max(5,Math.abs(a.x-b.x))+'px';seg.style.height=Math.max(5,Math.abs(a.y-b.y))+'px';seg.style.opacity=.72-(i*.12);board.append(seg)}})}
+    function drawPorts(){rows.forEach((r,i)=>{const input=document.createElement('span');input.className='port in';input.style.top=`calc(26px + ${r} * ((100% - 52px - 24px)/4 + 8px) + (100% - 52px - 24px)/8 - 11px)`;input.textContent=i+1;board.append(input)});for(let r=0;r<4;r++){const out=document.createElement('span');out.className='port out target';out.style.top=`calc(26px + ${r} * ((100% - 52px - 24px)/4 + 8px) + (100% - 52px - 24px)/8 - 11px)`;out.textContent=levels[level].target.indexOf(r)+1||'';board.append(out)}}
+    function check(show){const exits=rows.map(r=>trace(r).exit),ok=exits.every((e,i)=>e===levels[level].target[i]);document.querySelectorAll('.port.out').forEach((p,r)=>{const hit=exits.indexOf(r);p.classList.toggle('hit',hit>-1&&levels[level].target[hit]===r);p.classList.toggle('bad',hit>-1&&levels[level].target[hit]!==r)});feedback.classList.toggle('win',ok);feedback.textContent=ok?'Marea alineada. Puedes avanzar.':show?'Aún hay una salida cruzada. Ajusta un espejo.':'Observa las tres líneas y corrige un desvío.';return ok}
+    document.querySelector('#next').addEventListener('click',()=>{if(check(true)){if(level<levels.length-1){level++;init()}else{feedback.textContent='Todas las mareas quedaron en calma.'}}});document.querySelector('#reset').addEventListener('click',init);init();
+  </script>
+</body>
+</html>
