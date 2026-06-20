@@ -2,7 +2,7 @@
 
 ## Mission
 
-Every day at 3:00 a.m. Peru time, create and publish one new original web puzzle game for morning brain exercise inside this repository.
+Every Thursday at 3:00 a.m. Peru time, create and publish one new original web puzzle game for morning brain exercise inside this repository.
 
 The game must be playable in 10 to 15 minutes, feel fresh and mentally engaging, work well on desktop and mobile, and avoid repeating ideas already recorded in `memory.md`.
 
