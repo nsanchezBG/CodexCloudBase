@@ -2,7 +2,7 @@ name: Daily Codex puzzle request
 
 on:
   schedule:
-    - cron: "0 8 * * *" # 3:00 a.m. Peru time
+    - cron: "0 8 * * 4" # 3:00 a.m. Peru time
   workflow_dispatch:
 
 permissions:
