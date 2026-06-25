@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Telar de Intervalos</title>
+  <meta name="description" content="Un puzzle mental breve para ordenar pulsos por diferencias exactas.">
+  <style>
+    :root {
+      --bg: #f5f4ed;
+      --surface: #ffffff;
+      --ink: #293231;
+      --muted: #71817d;
+      --line: #d8ddd8;
+      --primary: #8aa39b;
+      --secondary: #cf6f78;
+      --success: #4f8f74;
+      --warning: #b05c55;
+      --r-sm: 6px;
+      --r-md: 8px;
+      --space: 14px;
+      --motion: 180ms;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(41, 50, 49, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(41, 50, 49, 0.03) 1px, transparent 1px),
+        var(--bg);
+      background-size: 42px 42px;
+    }
+
+    button { font: inherit; color: inherit; }
+
+    .app {
+      width: min(920px, calc(100% - 24px));
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      padding: 18px 0;
+    }
+
+    .shell {
+      width: 100%;
+      display: grid;
+      gap: var(--space);
+      padding: clamp(16px, 3vw, 24px);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 24px 60px rgba(41, 50, 49, 0.09);
+    }
+
+    header {
+      display: grid;
+      gap: 8px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 5vw, 2.2rem);
+      line-height: 1.05;
+      font-weight: 760;
+    }
+
+    .objective {
+      margin: 0 auto;
+      max-width: 46ch;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .hud {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      min-width: 84px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .chip strong { display: block; color: var(--ink); font-size: 1rem; }
+
+    .play {
+      display: grid;
+      gap: var(--space);
+      align-items: center;
+    }
+
+    .loom {
+      position: relative;
+      width: min(100%, 560px);
+      aspect-ratio: 1.7;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(138, 163, 155, 0.13), transparent 56%),
+        var(--surface);
+      overflow: hidden;
+    }
+
+    .thread-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .thread-line {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke var(--motion) ease;
+    }
+
+    .thread-line.is-good { stroke: rgba(79, 143, 116, 0.72); }
+    .thread-line.is-bad { stroke: rgba(176, 92, 85, 0.56); }
+
+    .slot {
+      position: absolute;
+      width: 58px;
+      height: 58px;
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: 0 10px 24px rgba(41, 50, 49, 0.08);
+      font-size: 1.25rem;
+      font-weight: 760;
+      cursor: pointer;
+      transition: transform var(--motion) ease, border-color var(--motion) ease, background var(--motion) ease;
+    }
+
+    .slot:hover, .slot:focus-visible {
+      outline: none;
+      border-color: var(--primary);
+      transform: translate(-50%, -50%) scale(1.04);
+    }
+
+    .slot.is-fixed {
+      border-color: rgba(207, 111, 120, 0.58);
+      background: #fbf1f2;
+      cursor: default;
+    }
+
+    .slot.is-duplicate { color: var(--warning); }
+    .slot.is-solved { background: #eff7f3; border-color: rgba(79, 143, 116, 0.62); }
+
+    .clue {
+      position: absolute;
+      min-width: 34px;
+      padding: 5px 8px;
+      transform: translate(-50%, -50%);
+      border-radius: var(--r-sm);
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 760;
+      text-align: center;
+      pointer-events: none;
+      transition: background var(--motion) ease;
+    }
+
+    .clue.is-good { background: var(--success); }
+    .clue.is-bad { background: var(--warning); }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rules li {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: rgba(245, 244, 237, 0.72);
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .action {
+      min-height: 44px;
+      border: 1px solid var(--ink);
+      border-radius: var(--r-sm);
+      background: var(--ink);
+      color: #fff;
+      font-weight: 740;
+      cursor: pointer;
+      transition: transform var(--motion) ease, background var(--motion) ease;
+    }
+
+    .action.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+
+    .action:hover, .action:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .feedback {
+      min-height: 24px;
+      margin: 0;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    @media (min-width: 780px) {
+      .play { grid-template-columns: 1fr 210px; }
+      .side { display: grid; gap: var(--space); align-content: center; }
+      .rules { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .app { width: min(100% - 16px, 920px); padding: 8px 0; }
+      .shell { padding: 14px; }
+      .loom { aspect-ratio: 1.12; }
+      .slot { width: 50px; height: 50px; font-size: 1.1rem; }
+      .rules { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 1ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="shell" aria-label="Juego Telar de Intervalos">
+      <header>
+        <h1>Telar de Intervalos</h1>
+        <p class="objective">Ordena los seis pulsos para que cada hilo marque la diferencia exacta.</p>
+        <div class="hud" aria-live="polite">
+          <span class="chip">nivel<strong id="levelLabel">1/5</strong></span>
+          <span class="chip">hilos listos<strong id="readyLabel">0/5</strong></span>
+          <span class="chip">movimientos<strong id="moveLabel">0</strong></span>
+        </div>
+      </header>
+
+      <div class="play">
+        <div class="loom" id="loom" aria-label="Telar con seis pulsos editables"></div>
+        <div class="side">
+          <ul class="rules">
+            <li>Toca un pulso para cambiarlo.</li>
+            <li>Usa 1 a 6 sin repetir.</li>
+            <li>Cada hilo pide una diferencia.</li>
+          </ul>
+          <div class="controls">
+            <button class="action" id="checkBtn">Revisar</button>
+            <button class="action secondary" id="resetBtn">Reiniciar</button>
+          </div>
+          <p class="feedback" id="feedback">El primer pulso ya está anclado.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const levels = [
+      { fixed: { 0: 2 }, clues: [3, 1, 2, 5, 2], start: [2, 1, 3, 4, 5, 6] },
+      { fixed: { 2: 6 }, clues: [2, 3, 1, 3, 2], start: [1, 2, 6, 3, 4, 5] },
+      { fixed: { 5: 2 }, clues: [1, 4, 2, 1, 2], start: [6, 4, 5, 3, 1, 2] },
+      { fixed: { 1: 4 }, clues: [3, 2, 4, 1, 2], start: [1, 4, 2, 6, 5, 3] },
+      { fixed: { 3: 6 }, clues: [2, 1, 3, 5, 4], start: [4, 5, 2, 6, 1, 3] }
+    ];
+
+    const positions = [
+      { x: 15, y: 50 }, { x: 31, y: 26 }, { x: 50, y: 42 },
+      { x: 69, y: 24 }, { x: 84, y: 50 }, { x: 50, y: 78 }
+    ];
+
+    const cluePositions = [
+      { x: 23, y: 38 }, { x: 41, y: 34 }, { x: 60, y: 33 },
+      { x: 77, y: 37 }, { x: 67, y: 65 }
+    ];
+
+    let levelIndex = 0;
+    let values = [];
+    let moves = 0;
+    let checked = false;
+
+    const loom = document.querySelector("#loom");
+    const levelLabel = document.querySelector("#levelLabel");
+    const readyLabel = document.querySelector("#readyLabel");
+    const moveLabel = document.querySelector("#moveLabel");
+    const feedback = document.querySelector("#feedback");
+    const checkBtn = document.querySelector("#checkBtn");
+    const resetBtn = document.querySelector("#resetBtn");
+
+    function isFixed(index) {
+      return Object.prototype.hasOwnProperty.call(levels[levelIndex].fixed, index);
+    }
+
+    function intervalState() {
+      const clues = levels[levelIndex].clues;
+      return clues.map((clue, index) => Math.abs(values[index] - values[index + 1]) === clue);
+    }
+
+    function duplicateSet() {
+      const counts = values.reduce((map, value) => map.set(value, (map.get(value) || 0) + 1), new Map());
+      return new Set(values.filter((value) => counts.get(value) > 1));
+    }
+
+    function solved() {
+      return intervalState().every(Boolean) && duplicateSet().size === 0;
+    }
+
+    function render() {
+      const level = levels[levelIndex];
+      const states = intervalState();
+      const duplicates = duplicateSet();
+      const ready = states.filter(Boolean).length;
+      levelLabel.textContent = `${levelIndex + 1}/${levels.length}`;
+      readyLabel.textContent = `${ready}/5`;
+      moveLabel.textContent = String(moves);
+      loom.innerHTML = `
+        <svg class="thread-svg" viewBox="0 0 100 100" aria-hidden="true">
+          <polyline class="thread-line ${checked ? (states.every(Boolean) ? "is-good" : "is-bad") : ""}" points="${positions.map((p) => `${p.x},${p.y}`).join(" ")}" />
+        </svg>
+      `;
+
+      positions.forEach((pos, index) => {
+        const button = document.createElement("button");
+        button.className = "slot";
+        button.style.left = `${pos.x}%`;
+        button.style.top = `${pos.y}%`;
+        button.textContent = values[index];
+        button.type = "button";
+        button.setAttribute("aria-label", `Pulso ${index + 1}, valor ${values[index]}`);
+        if (isFixed(index)) button.classList.add("is-fixed");
+        if (duplicates.has(values[index])) button.classList.add("is-duplicate");
+        if (solved()) button.classList.add("is-solved");
+        button.addEventListener("click", () => changeValue(index));
+        loom.append(button);
+      });
+
+      level.clues.forEach((clue, index) => {
+        const chip = document.createElement("span");
+        chip.className = "clue";
+        chip.style.left = `${cluePositions[index].x}%`;
+        chip.style.top = `${cluePositions[index].y}%`;
+        chip.textContent = `Δ${clue}`;
+        if (checked) chip.classList.add(states[index] ? "is-good" : "is-bad");
+        loom.append(chip);
+      });
+    }
+
+    function changeValue(index) {
+      if (isFixed(index) || solved()) return;
+      values[index] = values[index] === 6 ? 1 : values[index] + 1;
+      moves += 1;
+      checked = false;
+      feedback.textContent = "Sigue el pulso de hilo en hilo.";
+      render();
+    }
+
+    function check() {
+      checked = true;
+      if (solved()) {
+        if (levelIndex === levels.length - 1) {
+          feedback.textContent = "Telar completo: todos los intervalos respiran.";
+          checkBtn.textContent = "Terminado";
+          checkBtn.disabled = true;
+        } else {
+          feedback.textContent = "Patrón limpio. Avanza al siguiente telar.";
+          checkBtn.textContent = "Siguiente";
+        }
+      } else if (duplicateSet().size > 0) {
+        feedback.textContent = "Hay pulsos repetidos.";
+      } else {
+        feedback.textContent = "Algún hilo todavía no coincide.";
+      }
+      render();
+    }
+
+    function nextOrCheck() {
+      if (solved() && levelIndex < levels.length - 1) {
+        levelIndex += 1;
+        startLevel();
+        return;
+      }
+      check();
+    }
+
+    function startLevel() {
+      values = [...levels[levelIndex].start];
+      moves = 0;
+      checked = false;
+      checkBtn.textContent = "Revisar";
+      checkBtn.disabled = false;
+      feedback.textContent = "El pulso marcado queda fijo.";
+      render();
+    }
+
+    resetBtn.addEventListener("click", startLevel);
+    checkBtn.addEventListener("click", nextOrCheck);
+    startLevel();
+  </script>
+</body>
+</html>

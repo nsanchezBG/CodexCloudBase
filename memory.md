@@ -1,3 +1,12 @@
+## 2026-06-25 - Telar de Intervalos
+
+- Folder: telar-de-intervalos-2026-06-25/
+- Live URL: https://nsanchezBG.github.io/CodexCloudBase/telar-de-intervalos-2026-06-25/
+- Core mechanic: Cycle six numbered pulses along a woven path so adjacent absolute differences match five interval clues while using each number from 1 to 6 once.
+- Visual style: Ink palette with warm paper ground, white circular pulse buttons, charcoal thread clues, muted teal success states, and restrained rose warnings.
+- Brain skill trained: Difference logic, permutation planning, sequential deduction, and attention.
+- Notes to avoid repeating: Do not reuse six-node absolute-difference path ordering, fixed pulse anchors, or tactile weaving interval theming in the next games.
+
 ## 2026-06-20 - Espejo de Mareas
 
 - Folder: espejo-de-mareas-2026-06-20/
